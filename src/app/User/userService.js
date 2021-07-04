@@ -80,9 +80,7 @@ exports.postLogin = async function (email, password) {
             .update(password)
             .digest("hex");
 
-            console.log(hashedPassword);
             const passwordRows = await userProvider.passwordCheck(email);
-            console.log(passwordRows);
 
             if (passwordRows[0].password !== hashedPassword) {
                 return errResponse(baseResponse.LOGIN_PASSWORD_WRONG);
