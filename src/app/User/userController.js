@@ -66,9 +66,12 @@ exports.login = async function (req, res) {
     return res.send(loginReponse);
 }
 
-
 exports.check = async function (req, res) {
     const userIdResult = req.verifiedToken.userId;
     console.log(userIdResult);
-    return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS));
+    return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS, { "userId" : userIdResult}));
 };
+
+exports.autoLogin = async function (req,res) {
+
+}
