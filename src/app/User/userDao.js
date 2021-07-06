@@ -41,6 +41,17 @@ async function selectUserStatus(connection, email) {
   return userStatusRows;
 }
 
+// 유저 JWT 토큰 확인
+async function selectUserJwt(connection, userId) {
+  const selectUserJwtListQuery = `
+                SELECT id, jwt
+                FROM Token
+                WHERE userId = ? and status = 'Activated';
+                `;
+  const [userJwtRows] = await connection.query(selectUserJwtListQuery, userId);
+  return userJwtRows;
+}
+
 // 회원가입
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
@@ -63,11 +74,49 @@ async function selectUserPassword(connection, email) {
   return selectUserPasswordRows;
 }
 
+// 유저 JWT 토큰 등록
+async function insertToken(connection, userId, token) {
+  const insertTokenQuery = `
+      INSERT INTO Token (userId, jwt, status)
+      VALUES (?, ?, "Activated");
+  `;
+  
+  const [insertTokenRows] = await connection.query(insertTokenQuery, [userId, token]);
+  return insertTokenRows;
+}
+
+// 유저 JWT 토큰 상태 변경 - 로그아웃(Deleted)
+async function deleteJWT(connection, userId) {
+  const deleteJWTQuery = `
+      UPDATE Token
+      set status = 'Deleted'
+      where userId = ?;
+  `;
+  
+  const [deleteJWTRows] = await connection.query(deleteJWTQuery, [userId]);
+  return deleteJWTRows;
+}
+ 
+// 유저 JWT 토큰 상태 확인
+async function selectLogoutToken(connection, token) {
+  const selectLogoutTokenQuery = `
+                SELECT id, jwt, status
+                FROM Token
+                WHERE jwt = ?;
+                `;
+  const [selectLogoutTokenRows] = await connection.query(selectLogoutTokenQuery, token);
+  return selectLogoutTokenRows;
+}
+
 module.exports = {
   selectUser,
   selectUserEmail,
   selectUserNickname,
   insertUserInfo,
   selectUserPassword,
-  selectUserStatus
+  selectUserStatus,
+  selectUserJwt,
+  insertToken,
+  deleteJWT,
+  selectLogoutToken
 };

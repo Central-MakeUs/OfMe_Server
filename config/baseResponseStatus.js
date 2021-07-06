@@ -46,6 +46,9 @@ module.exports = {
     LOGIN_PASSWORD_WRONG : { "isSuccess": false, "code": 3004, "message": "비밀번호가 잘못 되었습니다." },
     LOGIN_WITHDRAWAL_ACCOUNT : { "isSuccess": false, "code": 3005, "message": "탈퇴 된 계정입니다. 고객센터에 문의해주세요." },
     SIGNUP_PASSWORD_CONFIRM : { "isSuccess": false, "code": 3007, "message": "비밀번호가 일치하지 않습니다." },
+    SIGNIN_ALREADY_LOGIN : { "isSuccess": false, "code": 3008, "message": "이미 로그인된 유저입니다." },
+    LOGOUT_ALREADY_LOGOUT : { "isSuccess": false, "code": 3009, "message": "이미 로그아웃된 토큰입니다." },
+
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

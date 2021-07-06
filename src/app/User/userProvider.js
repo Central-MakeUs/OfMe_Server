@@ -33,3 +33,19 @@ exports.accountCheck = async function(email) {
 
   return userListResult;  
 }
+
+exports.checkJWT = async function(userId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userListResult = await userDao.selectUserJwt(connection, userId);
+  connection.release()
+
+  return userListResult; 
+}
+
+exports.checkLogoutToken = async function(token) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userListResult = await userDao.selectLogoutToken(connection, token);
+  connection.release()
+
+  return userListResult; 
+}

@@ -66,12 +66,40 @@ exports.login = async function (req, res) {
     return res.send(loginReponse);
 }
 
-exports.check = async function (req, res) {
-    const userIdResult = req.verifiedToken.userId;
-    console.log(userIdResult);
-    return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS, { "userId" : userIdResult}));
-};
+// exports.check = async function (req, res) {
 
-exports.autoLogin = async function (req,res) {
+//     const iat = new Date(req.verifiedToken.iat * 1000).toLocaleString();
+//     const exp = new Date(req.verifiedToken.exp * 1000).toLocaleString();
 
+//     return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS, { "userId" : req.verifiedToken.userId, "iat" : iat, "exp" : exp}));
+// };
+
+exports.autoLogin = async function(req,res) {
+
+    const userIdFromJwt = req.verifiedToken.userId;
+
+    const token = req.headers['x-access-token'];
+    const checkJWT = await userProvider.checkJWT(userIdFromJwt);
+
+    if(checkJWT.length < 1)
+        return res.send(errResponse(baseResponse.TOKEN_VERIFICATION_FAILURE));
+    else if (token == checkJWT[0].jwt)
+        return res.send(response(baseResponse.SUCCESS, {"userId" : userIdFromJwt, "jwt" : token}));
+    else
+        return res.send(errResponse(baseResponse.TOKEN_VERIFICATION_FAILURE));
+}
+
+exports.logout = async function(req,res) {
+
+    const userIdFromJwt = req.verifiedToken.userId;
+
+    const token = req.headers['x-access-token'];
+    const checkLogoutToken = await userProvider.checkLogoutToken(token);
+
+    if(checkLogoutToken[0].status === 'Deleted')
+        return res.send(errResponse(baseResponse.LOGOUT_ALREADY_LOGOUT));
+
+    const logoutResponse = await userService.deleteJWT(userIdFromJwt);
+
+    return res.send(logoutResponse);
 }

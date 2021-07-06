@@ -38,11 +38,14 @@ exports.createUser = async function (email, password, checkPassword, nickname) {
 
             const insertUserInfoParams = [email, hashedPassword, nickname];
 
-            const connection = await pool.getConnection(async (conn) => conn);
+            await connection.beginTransaction();
 
             const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
             console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
+
+            await connection.commit();
             connection.release();
+
             return response(baseResponse.SUCCESS, {"createUser" : userIdResult[0].insertId});
 
         } catch (err) {
@@ -86,6 +89,14 @@ exports.postLogin = async function (email, password) {
                 return errResponse(baseResponse.LOGIN_PASSWORD_WRONG);
             }
 
+            // 이미 로그인된 유저인지 확인
+            const checkJWT = await userProvider.checkJWT(passwordRows[0].id);
+            console.log(checkJWT);
+            if(checkJWT.length > 0) {
+                return errResponse(baseResponse.SIGNIN_ALREADY_LOGIN);
+            }
+
+            await connection.beginTransaction();
 
             //토큰 생성 Service
             let token = await jwt.sign(
@@ -100,6 +111,11 @@ exports.postLogin = async function (email, password) {
             );
 
             console.log(token);
+            
+            const tokenResult = await userDao.insertToken(connection, passwordRows[0].id, token);
+
+            await connection.commit();
+            connection.release();
 
             return response(baseResponse.SUCCESS, {'userId': userInfoRows[0].id, 'jwt': token});
 
@@ -111,6 +127,32 @@ exports.postLogin = async function (email, password) {
         }
     } catch (err) {
         logger.error(`App - postLogin Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+exports.deleteJWT = async function(userId) {
+    try {
+        const connection = await pool.getConnection(async(conn) => conn);
+        try {
+
+        await connection.beginTransaction();
+        
+        const deleteJWTResult = await userDao.deleteJWT(connection, userId);
+
+        await connection.commit();
+        connection.release();
+
+        return response(baseResponse.SUCCESS, {'userId' : userId});
+
+        } catch (err) {
+            await connection.rollback();
+            connection.release();
+            logger.error(`App - logout Service error\n: ${err.message}`);
+            return errResponse(baseResponse.DB_ERROR);
+        }
+    } catch (err) {
+        logger.error(`App - logout Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

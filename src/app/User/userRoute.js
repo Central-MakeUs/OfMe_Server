@@ -9,9 +9,13 @@ module.exports = function(app){
     app.post('/login', user.login);
 
     // JWT 유효성 확인 API
-    app.get('/check', jwtMiddleware, user.check);
+    //app.get('/check', jwtMiddleware, user.check);
 
-    // 자동로그인 API
-    app.get('/auto-login', jwtMiddleware, user.autoLogin);
+    // 자동 로그인 API
+    app.post('/auto-login', jwtMiddleware, user.autoLogin);
+
+    // 로그아웃 API
+    app.patch('/logout', jwtMiddleware, user.logout);
+    
 };
 
