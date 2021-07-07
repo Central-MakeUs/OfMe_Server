@@ -33,7 +33,7 @@ async function selectUserNickname(connection, nickname) {
 // 유저 상태 확인
 async function selectUserStatus(connection, email) {
   const selectUserStatusListQuery = `
-                SELECT id, status 
+                SELECT id, email, status 
                 FROM User
                 WHERE email = ?;
                 `;
@@ -108,6 +108,20 @@ async function selectLogoutToken(connection, token) {
   return selectLogoutTokenRows;
 }
 
+// 유저 회원탈퇴
+async function deleteUser(connection, userId) {
+  const deleteUserQuery = `
+      UPDATE User
+      set status = 'Deleted'
+      where id = ?;
+  `;
+  
+  const [deleteUserRows] = await connection.query(deleteUserQuery, [userId]);
+  return deleteUserRows;
+}
+
+
+
 module.exports = {
   selectUser,
   selectUserEmail,
@@ -118,5 +132,6 @@ module.exports = {
   selectUserJwt,
   insertToken,
   deleteJWT,
-  selectLogoutToken
+  selectLogoutToken,
+  deleteUser
 };

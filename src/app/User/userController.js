@@ -103,3 +103,13 @@ exports.logout = async function(req,res) {
 
     return res.send(logoutResponse);
 }
+
+exports.withdraw = async function(req,res) {
+
+    const userIdFromJwt = req.verifiedToken.userId;
+    const emailFromJwt = req.verifiedToken.email;
+
+    const deleteUserResponse = await userService.deleteUser(userIdFromJwt, emailFromJwt);
+
+    return res.send(deleteUserResponse);
+}

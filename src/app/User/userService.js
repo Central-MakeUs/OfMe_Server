@@ -102,6 +102,7 @@ exports.postLogin = async function (email, password) {
             let token = await jwt.sign(
                 {
                     userId: userInfoRows[0].id,
+                    email: userInfoRows[0].email
                 }, // 토큰의 내용(payload)
                 secret_config.jwtsecret, // 비밀키
                 {
@@ -153,6 +154,39 @@ exports.deleteJWT = async function(userId) {
         }
     } catch (err) {
         logger.error(`App - logout Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+exports.deleteUser = async function(userId, email) {
+    try {
+        const connection = await pool.getConnection(async(conn) => conn);
+        try {
+
+        await connection.beginTransaction();
+
+        // 계정 상태 확인
+        const userInfoRows = await userProvider.accountCheck(email);
+        if (userInfoRows[0].status === "Deleted") {
+            return errResponse(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT);
+        }
+        
+        const deleteJWTResult = await userDao.deleteJWT(connection, userId);
+        const deleteUserResult = await userDao.deleteUser(connection, userId);
+
+        await connection.commit();
+        connection.release();
+
+        return response(baseResponse.SUCCESS, {'userId' : userId});
+
+        } catch (err) {
+            await connection.rollback();
+            connection.release();
+            logger.error(`App - Withdraw Service error\n: ${err.message}`);
+            return errResponse(baseResponse.DB_ERROR);
+        }
+    } catch (err) {
+        logger.error(`App - Withdraw Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

@@ -15,7 +15,10 @@ module.exports = function(app){
     app.post('/auto-login', jwtMiddleware, user.autoLogin);
 
     // 로그아웃 API
-    app.patch('/logout', jwtMiddleware, user.logout);
+    app.post('/logout', jwtMiddleware, user.logout);
+
+    // 회원탈퇴 API
+    app.delete('/users', jwtMiddleware, user.withdraw);
     
 };
 
