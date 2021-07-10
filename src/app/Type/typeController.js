@@ -13,3 +13,8 @@ exports.getTypes = async function (req, res) {
     return res.send(getTypesResponse);
 };
 
+// exports.postTypes = async function(req,res) {
+
+//     const userId = req.verifiedToken.userId;
+
+// }

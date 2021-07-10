@@ -6,7 +6,7 @@ module.exports = function(app){
     app.get('/types', type.getTypes);
 
     // 유형 선택 등록 후 결과 조회 API
-    
+    //app.post('/types', jwtMiddleware, type.postTypes);
     
 };
 
