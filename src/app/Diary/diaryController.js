@@ -1,6 +1,6 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
-const userProvider = require("../User/diaryProvider");
-const userService = require("../User/diaryService");
+const diaryProvider = require("../Diary/diaryProvider");
+const diaryService = require("../Diary/diaryService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
@@ -8,48 +8,27 @@ const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 
 /**
- * API No. 0
- * API Name : 테스트 API
- * [GET] /app/test
- */
-//  exports.getTest = async function (req, res) {
-//      return res.send(response(baseResponse.SUCCESS))
-//  }
-
-/**
  * API No. 1
- * API Name : 유저 생성 (회원가입) API
- * [POST] /app/users
+ * API Name : 데일리 다이어리 조회 API
+ * [GET] /diarys?year=&months=&days=
  */
-exports.postUsers = async function (req, res) {
-
+exports.getDiarys = async function (req, res) {
     /**
-     * Body: email, password, nickname
+     * queryString: years, months, days
      */
-    const {email, password, nickname} = req.body;
+    const userId = req.verifiedToken.userId;
+    const {years, months, days} = req.query;
+    const createAt = years+'-'+months+'-'+days;
 
-    // 빈 값 체크
-    if (!email)
-        return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
+    const userRows = await diaryProvider.getUser(userId);
 
-    // 길이 체크
-    if (email.length > 30)
-        return res.send(response(baseResponse.SIGNUP_EMAIL_LENGTH));
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    // 형식 체크 (by 정규표현식)
-    if (!regexEmail.test(email))
-        return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
-
-    // 기타 등등 - 추가하기
-
-
-    const signUpResponse = await userService.createUser(
-        email,
-        password,
-        nickname
-    );
-
-    return res.send(signUpResponse);
+    const selectDiaryRows = await diaryProvider.selectDiary(userId, createAt);
+    console.log(!selectDiaryRows);
+    if(selectDiaryRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
+    else return res.send(response(baseResponse.SUCCESS, selectDiaryRows));
 };
 
 /**

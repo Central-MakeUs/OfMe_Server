@@ -120,7 +120,17 @@ async function deleteUser(connection, userId) {
   return deleteUserRows;
 }
 
-
+// 유저 정보조회
+async function getUser(connection, userId) {
+  const getUserQuery = `
+      select id, nickname
+      from User
+      where id = ? and status = 'Activated';
+  `;
+  
+  const [getUserRows] = await connection.query(getUserQuery, [userId]);
+  return getUserRows;
+}
 
 module.exports = {
   selectUser,
@@ -133,5 +143,6 @@ module.exports = {
   insertToken,
   deleteJWT,
   selectLogoutToken,
-  deleteUser
+  deleteUser,
+  getUser,
 };

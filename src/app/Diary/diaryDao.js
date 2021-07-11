@@ -8,15 +8,15 @@ async function selectUser(connection) {
   return userRows;
 }
 
-// 이메일로 회원 조회
-async function selectUserEmail(connection, email) {
-  const selectUserEmailQuery = `
-                SELECT email, nickname 
-                FROM UserInfo 
-                WHERE email = ?;
+// 연도,월,일로 다이어리 조회
+async function selectDiary(connection, userId, createAt) {
+  const selectQuery = `
+                SELECT id, userId, conceptId, title, content, date_format(createAt, '%Y-%m-%d') as createAt
+                FROM DayDiary
+                WHERE userId = ? and date(createAt) = ? and status = 'Activated';
                 `;
-  const [emailRows] = await connection.query(selectUserEmailQuery, email);
-  return emailRows;
+  const [selectDiaryRows] = await connection.query(selectQuery, [userId, createAt]);
+  return selectDiaryRows;
 }
 
 // userId 회원 조회
@@ -83,7 +83,7 @@ async function updateUserInfo(connection, id, nickname) {
 
 module.exports = {
   selectUser,
-  selectUserEmail,
+  selectDiary,
   selectUserId,
   insertUserInfo,
   selectUserPassword,

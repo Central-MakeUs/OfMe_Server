@@ -1,34 +1,26 @@
 const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
 
-const userDao = require("./diaryDao");
-
+const diaryDao = require("./diaryDao");
+const userDao = require("../User/userDao");
 // Provider: Read 비즈니스 로직 처리
 
-exports.retrieveUserList = async function (email) {
-  if (!email) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const userListResult = await userDao.selectUser(connection);
-    connection.release();
+exports.getUser = async function (userId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getUsers = await userDao.getUser(connection, userId);
+  console.log(22222)
+  connection.release();
 
-    return userListResult;
-
-  } else {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const userListResult = await userDao.selectUserEmail(connection, email);
-    connection.release();
-
-    return userListResult;
-  }
+  return getUsers;
 };
 
-exports.retrieveUser = async function (userId) {
+exports.selectDiary = async function (userId, createAt) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const userResult = await userDao.selectUserId(connection, userId);
+  const selectDiaryRows = await diaryDao.selectDiary(connection, userId, createAt);
 
   connection.release();
 
-  return userResult[0];
+  return selectDiaryRows;
 };
 
 exports.emailCheck = async function (email) {

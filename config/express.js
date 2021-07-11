@@ -20,7 +20,8 @@ module.exports = function () {
     /* App (Android, iOS) */
     require('../src/app/User/userRoute')(app);
     require('../src/app/Type/typeRoute')(app);
-
+    require('../src/app/Diary/diaryRoute')(app);
+    require('../src/app/Concept/conceptRoute')(app);
 
     return app;
 };
