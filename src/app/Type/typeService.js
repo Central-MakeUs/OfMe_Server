@@ -12,50 +12,32 @@ const crypto = require("crypto");
 const {connect} = require("http2");
 
 
-// exports.createUser = async function (email, password, checkPassword, nickname) {
-//     try {
-//         const connection = await pool.getConnection(async (conn) => conn);
-//         try {
-//             // 이메일 중복 확인
-//             const emailRows = await userProvider.emailCheck(email);
-//             if (emailRows.length > 0)
-//                 return errResponse(baseResponse.SIGNUP_REDUNDANT_EMAIL);
+exports.postAndGetTypeResult = async function (userId, typeId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        try {
             
-//             // 비밀번호 재확인
-//             if (!(password === checkPassword))
-//                 return errResponse(baseResponse.SIGNUP_PASSWORD_CONFIRM);
-
-//             // 닉네임 중복 확인
-//             const nicknameRows = await userProvider.nicknameCheck(nickname);
-//             if(nicknameRows.length > 0)
-//                 return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
+            // 유형 결과 조회
+            const getTypeResult = await typeProvider.retrieveTypeResult(typeId);
             
-//             // 비밀번호 암호화
-//             const hashedPassword = await crypto
-//                 .createHash("sha512")
-//                 .update(password)
-//                 .digest("hex");
+            await connection.beginTransaction();
 
-//             const insertUserInfoParams = [email, hashedPassword, nickname];
+            // 유형 결과 등록
+            const postUserType = await typeDao.postUserType(connection, userId, typeId);
 
-//             await connection.beginTransaction();
+            await connection.commit();
+            connection.release();
 
-//             const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-//             console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
+            return getTypeResult;
 
-//             await connection.commit();
-//             connection.release();
-
-//             return response(baseResponse.SUCCESS, {"createUser" : userIdResult[0].insertId});
-
-//         } catch (err) {
-//             await connection.rollback();
-//             connection.release();
-//             logger.error(`App - createUser Service error\n: ${err.message}`);
-//             return errResponse(baseResponse.DB_ERROR);
-//         }
-//     } catch (err) {
-//         logger.error(`App - createUser Service error\n: ${err.message}`);
-//         return errResponse(baseResponse.DB_ERROR);
-//     }
-// };
+        } catch (err) {
+            await connection.rollback();
+            connection.release();
+            logger.error(`App - postAndGetTypeResult Service error\n: ${err.message}`);
+            return errResponse(baseResponse.DB_ERROR);
+        }
+    } catch (err) {
+        logger.error(`App - postAndGetTypeResult Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};

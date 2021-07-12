@@ -35,6 +35,8 @@ module.exports = {
     SIGNUP_CHECKPASSWORD_EMPTY : { "isSuccess": false, "code": 2019, "message": "재확인 비밀번호를 입력해주세요." },
     SIGNUP_NICKNAME_TYPE : { "isSuccess": false, "code": 2020, "message": "닉네임은 한글만 허용합니다." },
     LOGIN_PASSWORD_LENGTH : { "isSuccess": false, "code": 2021, "message":"비밀번호는 8~20자리를 입력해주세요." },
+    USERTYPE_TYPEID_EMPTY : { "isSuccess": false, "code": 2022, "message":"typeId를 입력해주세요." },
+    USERTYPE_TYPEID_ERROR : { "isSuccess": false, "code": 2023, "message": "typeId는 1~16 사이의 값을 입력해주세요."},
 
 
 
