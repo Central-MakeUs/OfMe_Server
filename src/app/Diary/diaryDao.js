@@ -1,13 +1,3 @@
-// 모든 유저 조회
-async function selectUser(connection) {
-  const selectUserListQuery = `
-                SELECT email, nickname 
-                FROM UserInfo;
-                `;
-  const [userRows] = await connection.query(selectUserListQuery);
-  return userRows;
-}
-
 // 연도,월,일로 다이어리 조회
 async function selectDiary(connection, userId, createAt) {
   const selectQuery = `
@@ -19,29 +9,28 @@ async function selectDiary(connection, userId, createAt) {
   return selectDiaryRows;
 }
 
-// userId 회원 조회
-async function selectUserId(connection, userId) {
-  const selectUserIdQuery = `
-                 SELECT id, email, nickname 
-                 FROM UserInfo 
-                 WHERE id = ?;
-                 `;
-  const [userRow] = await connection.query(selectUserIdQuery, userId);
-  return userRow;
+// 다이어리 작성
+async function insertDiaryInfo(connection, insertDiaryParams) {
+  const insertDiaryQuery = `
+                insert into DayDiary(userId, title, conceptId, content, createAt)
+                values (?, ?, ?, ?, ?);
+                `;
+  const [diaryRow] = await connection.query(insertDiaryQuery, insertDiaryParams);
+  return diaryRow;
 }
 
-// 유저 생성
-async function insertUserInfo(connection, insertUserInfoParams) {
+// 다이어리 이미지 작성
+async function insertDiaryImg(connection, [DiaryImgList]) {
   const insertUserInfoQuery = `
-        INSERT INTO UserInfo(email, password, nickname)
-        VALUES (?, ?, ?);
+        INSERT INTO DayDiaryImg(dayDiaryId, createAt, image)
+        VALUES ?;
     `;
-  const insertUserInfoRow = await connection.query(
+  const [diaryImgRow] = await connection.query(
     insertUserInfoQuery,
-    insertUserInfoParams
+    [DiaryImgList]
   );
 
-  return insertUserInfoRow;
+  return diaryImgRow;
 }
 
 // 패스워드 체크
@@ -82,10 +71,9 @@ async function updateUserInfo(connection, id, nickname) {
 
 
 module.exports = {
-  selectUser,
   selectDiary,
-  selectUserId,
-  insertUserInfo,
+  insertDiaryInfo,
+  insertDiaryImg,
   selectUserPassword,
   selectUserAccount,
   updateUserInfo,

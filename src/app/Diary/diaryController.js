@@ -1,4 +1,5 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
+const userProvider = require("../User/userProvider");
 const diaryProvider = require("../Diary/diaryProvider");
 const diaryService = require("../Diary/diaryService");
 const baseResponse = require("../../../config/baseResponseStatus");
@@ -20,7 +21,7 @@ exports.getDiarys = async function (req, res) {
     const {years, months, days} = req.query;
     const createAt = years+'-'+months+'-'+days;
 
-    const userRows = await diaryProvider.getUser(userId);
+    const userRows = await userProvider.getUser(userId);
 
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
@@ -33,9 +34,31 @@ exports.getDiarys = async function (req, res) {
 
 /**
  * API No. 2
- * API Name : 유저 조회 API (+ 이메일로 검색 조회)
- * [GET] /app/users
+ * API Name : 데일리 다이어리 수정 API
+ * [POST]] /diarys
  */
+exports.postDiarys = async function (req, res) {
+    /**
+     * body: title, character, text, img, createAt
+     */
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const {title, character, text, img, createAt} = req.body;
+
+    if (!title) return res.send(response(baseResponse.DIARY_TITLE_NOT_EXIST));
+    else if (!text) return res.send(response(baseResponse.DIARY_TEXT_NOT_EXIST));
+    else if (!createAt) return res.send(response(baseResponse.DIARY_CREATEAT_NOT_EXIST));
+    else if (img.length > 4) return res.send(response(baseResponse.DIARY_IMG_NOT_EXIST));
+
+    const createDiaryRows = await diaryService.createDiary(userId, title, character, text, img, createAt);
+    console.log(createDiaryRows);
+    if(createDiaryRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
+    else return res.send(response(baseResponse.SUCCESS));
+};
+
 exports.getUsers = async function (req, res) {
 
     /**

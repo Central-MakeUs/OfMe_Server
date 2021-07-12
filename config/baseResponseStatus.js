@@ -53,6 +53,10 @@ module.exports = {
 
     // 다이어리 error
     DIARY_NOT_EXIST : { "isSuccess": false, "code": 3110, "message": "작성된 다이어리가 없습니다." },
+    DIARY_TITLE_NOT_EXIST : { "isSuccess": false, "code": 3111, "message": "타이틀을 입력해주세요." },
+    DIARY_TEXT_NOT_EXIST : { "isSuccess": false, "code": 3112, "message": "내용을 입력해주세요." },
+    DIARY_CREATEAT_NOT_EXIST : { "isSuccess": false, "code": 3113, "message": "날짜를 선택해주세요." },
+    DIARY_IMG_NOT_EXIST : { "isSuccess": false, "code": 3114, "message": "이미지는 최대 4개까지 입니다." },
 
 
     //Connection, Transaction 등의 서버 오류
