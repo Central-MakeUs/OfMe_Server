@@ -51,12 +51,44 @@ async function selectTypes(connection) {
   return selectTypesRows;
 }
 
+// 유형 결과 조회
+async function selectTypeResult(connection, typeId) {
+  const selectTypeResultQuery = `
+                SELECT id as typeId, subName, name, highlight, keyword, description1, description2
+                FROM TypeData
+                WHERE id = ?;
+                `;
+  const [selectTypeResultRows] = await connection.query(selectTypeResultQuery, [typeId]);
+  return selectTypeResultRows[0];
+}
 
+// 유저 유형 결과 등록
+async function postUserType(connection, userId, typeId) {
+  const postUserTypeQuery = `
+                INSERT INTO UserType (userId, typeId)
+                VALUES (?, ?)
+                `;
+  const [postUserTypeRows] = await connection.query(postUserTypeQuery, [userId, typeId]);
+  return postUserTypeRows;
+}
+
+// 12단계 테스트 조회
+async function selectTypeTests(connection) {
+  const selectTypeTestsQuery = `
+                SELECT id, sort, question, highlight, ENTPanswer, ISFJanswer
+                FROM TypeTest
+                `;
+  const [selectTypeTestsRows] = await connection.query(selectTypeTestsQuery);
+  return selectTypeTestsRows;
+}
 
 module.exports = {
   selectUser,
   selectUserEmail,
   selectUserNickname,
   selectUserStatus,
-  selectTypes
+  selectTypes,
+  selectTypeResult,
+  postUserType,
+  selectTypeTests
 };
