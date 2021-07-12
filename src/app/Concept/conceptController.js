@@ -23,7 +23,7 @@ exports.getConceptStage = async function (req, res) {
     else if (stage in (1,2,3))
         return res.send(response(baseResponse.CONCEPT_STAGE_NOT_EXIST));
     else
-        const signUpResponse = await conceptProvider.createUser(stage);
+        const signUpResponse = await conceptProvider.selectConcept(stage);
 
     return res.send(signUpResponse);
 };
