@@ -5,8 +5,11 @@ module.exports = function(app){
     // 1. 데일리 다이어리 조회 API
     app.get('/diarys', jwtMiddleware, diary.getDiarys);
 
-    // 2. 데일리 다이어리 수정 API
+    // 2. 데일리 다이어리 작성 API
     app.post('/diarys', jwtMiddleware, diary.postDiarys);
+
+    // 3. 데일리 다이어리 수정 API
+    app.patch('/diarys', jwtMiddleware, diary.patchDiarys);
 };
 
 

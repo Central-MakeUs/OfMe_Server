@@ -13,6 +13,11 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
+/**
+ * API No. 2
+ * API Name : 데일리 다이어리 작성 API
+ * [POST]] /diarys
+ */
 exports.createDiary = async function (userId, title, character, text, img, createAt) {
     try {
         const insertDiaryParams = [userId, title, character, text, createAt];
@@ -24,14 +29,43 @@ exports.createDiary = async function (userId, title, character, text, img, creat
             for (i in img){
                 DiaryImgList.push([DiaryResult.insertId, createAt, img[i]]);
             }
-            console.log([DiaryImgList]);
+
             await diaryDao.insertDiaryImg(connection, [DiaryImgList]);
         }
         connection.release();
         return response(baseResponse.SUCCESS);
 
     } catch (err) {
-        logger.error(`App - createUser Service error\n: ${err.message}`);
+        logger.error(`App - createDiary Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+/**
+ * API No. 3
+ * API Name : 데일리 다이어리 수정 API
+ * [PATCH] /diarys
+ */
+exports.updateDiary = async function (selectDiaryImgRows, id, userId, title, character, text, img, createAt) {
+    try {
+        const insertDiaryParams = [title, character, text, createAt, id];
+        let DiaryImgList = [];
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const updateDiary = await diaryDao.updateDiary(connection, insertDiaryParams);
+
+        if (selectDiaryImgRows.length > 0) {
+            for (i in img){
+                DiaryImgList = [createAt, img[i], selectDiaryImgRows[i].id];
+                await diaryDao.updateDiaryImg(connection, DiaryImgList);
+            }
+        }
+        
+        connection.release();
+        return response(baseResponse.SUCCESS);
+
+    } catch (err) {
+        logger.error(`App - updateDiary Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

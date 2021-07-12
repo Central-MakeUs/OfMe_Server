@@ -4,6 +4,11 @@ const { logger } = require("../../../config/winston");
 const diaryDao = require("./diaryDao");
 // Provider: Read 비즈니스 로직 처리
 
+/**
+ * API No. 1
+ * API Name : 데일리 다이어리 조회 API
+ * [GET] /diarys?year=&months=&days=
+ */
 exports.selectDiary = async function (userId, createAt) {
   const connection = await pool.getConnection(async (conn) => conn);
   const selectDiaryRows = await diaryDao.selectDiary(connection, userId, createAt);
@@ -12,29 +17,27 @@ exports.selectDiary = async function (userId, createAt) {
 
   return selectDiaryRows;
 };
-
-exports.emailCheck = async function (email) {
+/**
+ * API Name : 데일리 다이어리 수정 API
+ * 다이어리 작성자와 수정할 사용자와 같은 사람인지 확인
+ */
+exports.selectDiaryId = async function (diaryId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const emailCheckResult = await userDao.selectUserEmail(connection, email);
+  const selectDiaryIdRows = await diaryDao.selectDiaryId(connection, diaryId);
+
   connection.release();
 
-  return emailCheckResult;
+  return selectDiaryIdRows;
 };
-
-exports.passwordCheck = async function (selectUserPasswordParams) {
+/**
+ * API Name : 데일리 다이어리 수정 API
+ * 수정할 다이어리 이미지 불러오기
+ */
+exports.selectDiaryImg = async function (diaryId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const passwordCheckResult = await userDao.selectUserPassword(
-      connection,
-      selectUserPasswordParams
-  );
-  connection.release();
-  return passwordCheckResult[0];
-};
+  const selectDiaryImgRows = await diaryDao.selectDiaryImg(connection, diaryId);
 
-exports.accountCheck = async function (email) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const userAccountResult = await userDao.selectUserAccount(connection, email);
   connection.release();
 
-  return userAccountResult;
+  return selectDiaryImgRows;
 };

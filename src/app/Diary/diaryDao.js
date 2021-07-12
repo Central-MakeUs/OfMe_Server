@@ -33,48 +33,59 @@ async function insertDiaryImg(connection, [DiaryImgList]) {
   return diaryImgRow;
 }
 
-// 패스워드 체크
-async function selectUserPassword(connection, selectUserPasswordParams) {
-  const selectUserPasswordQuery = `
-        SELECT email, nickname, password
-        FROM UserInfo 
-        WHERE email = ? AND password = ?;`;
-  const selectUserPasswordRow = await connection.query(
-      selectUserPasswordQuery,
-      selectUserPasswordParams
+// 다이어리 작성자와 수정자 확인
+async function selectDiaryId(connection, diaryId) {
+  const selectQuery = `
+                SELECT userId
+                FROM DayDiary
+                WHERE id = ?;
+                `;
+  const [selectDiaryRows] = await connection.query(selectQuery, diaryId);
+  return selectDiaryRows;
+}
+
+// 다이어리 수정
+async function updateDiary(connection, DiaryParams) {
+  const insertDiaryQuery = `
+              update DayDiary
+              set title = ?, conceptId = ?, content = ?, createAt = ?
+              where id = ?;
+                `;
+  const [diaryRow] = await connection.query(insertDiaryQuery, DiaryParams);
+  return diaryRow;
+}
+
+// 다이어리 이미지 수정
+async function updateDiaryImg(connection, DiaryImgList) {
+  const insertUserInfoQuery = `
+        update DayDiaryImg
+        set createAt = ?, image = ?
+        where id = ?;
+    `;
+  const [diaryImgRow] = await connection.query(
+    insertUserInfoQuery,
+    DiaryImgList
   );
-
-  return selectUserPasswordRow;
+  return diaryImgRow;
 }
 
-// 유저 계정 상태 체크 (jwt 생성 위해 id 값도 가져온다.)
-async function selectUserAccount(connection, email) {
-  const selectUserAccountQuery = `
-        SELECT status, id
-        FROM UserInfo 
-        WHERE email = ?;`;
-  const selectUserAccountRow = await connection.query(
-      selectUserAccountQuery,
-      email
-  );
-  return selectUserAccountRow[0];
+// 작성한 다이어리 이미지 불러오기
+async function selectDiaryImg(connection, dayDiaryId) {
+  const selectQuery = `
+                SELECT id, dayDiaryId, image, date_format(createAt, '%Y-%m-%d') as createAt
+                FROM DayDiaryImg
+                WHERE dayDiaryId = ?;
+                `;
+  const [selectDiaryRows] = await connection.query(selectQuery, dayDiaryId);
+  return selectDiaryRows;
 }
-
-async function updateUserInfo(connection, id, nickname) {
-  const updateUserQuery = `
-  UPDATE UserInfo 
-  SET nickname = ?
-  WHERE id = ?;`;
-  const updateUserRow = await connection.query(updateUserQuery, [nickname, id]);
-  return updateUserRow[0];
-}
-
 
 module.exports = {
   selectDiary,
   insertDiaryInfo,
+  selectDiaryId,
   insertDiaryImg,
-  selectUserPassword,
-  selectUserAccount,
-  updateUserInfo,
+  updateDiary,
+  updateDiaryImg,
+  selectDiaryImg
 };
