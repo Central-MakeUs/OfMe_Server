@@ -51,6 +51,10 @@ module.exports = {
     SIGNIN_ALREADY_LOGIN : { "isSuccess": false, "code": 3008, "message": "이미 로그인된 유저입니다." },
     LOGOUT_ALREADY_LOGOUT : { "isSuccess": false, "code": 3009, "message": "이미 로그아웃된 토큰입니다." },
 
+    // 컨셉 error
+    CONCEPT_NOT_EXIST : { "isSuccess": false, "code": 3020, "message": "조회할 컨셉 스테이지를 입력하세요." },
+    CONCEPT_STAGE_NOT_EXIST : { "isSuccess": false, "code": 3020, "message": "조회할 스테이지가 없습니다. 1, 2, 3 중에 입력해주세요." },
+
     // 다이어리 error
     DIARY_NOT_EXIST : { "isSuccess": false, "code": 3110, "message": "작성된 다이어리가 없습니다." },
     DIARY_TITLE_NOT_EXIST : { "isSuccess": false, "code": 3111, "message": "타이틀을 입력해주세요." },
