@@ -10,6 +10,9 @@ module.exports = function(app){
 
     // 3. 데일리 다이어리 수정 API
     app.patch('/diarys', jwtMiddleware, diary.patchDiarys);
+    
+    // 3. 데일리 다이어리 삭제 API
+    app.delete('/diarys/:diaryId', jwtMiddleware, diary.deleteDiarys);
 };
 
 

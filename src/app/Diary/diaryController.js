@@ -93,3 +93,30 @@ exports.patchDiarys = async function (req, res) {
 
     if (updateDiaryRows) return res.send(response(baseResponse.SUCCESS));
 };
+
+/**
+ * API No. 4
+ * API Name : 데일리 다이어리 삭제 API
+ * [PATCH] /diarys/:diaryId
+ */
+exports.deleteDiarys = async function (req, res) {
+    /**
+     * params: diaryId
+     */
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const diaryId = req.params.diaryId;
+
+    if (!diaryId) return res.send(response(baseResponse.DIARY_ID_NOT_EXIST));
+
+    const selectDiaryIdRows = await diaryProvider.selectDiaryId(userId, diaryId);
+    if (selectDiaryIdRows[0].userId != userId) return res.send(response(baseResponse.DIARY_USER_NOT_EXIST));
+    else if(selectDiaryIdRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
+
+    const deleteDiaryRows = await diaryService.deleteDiary(diaryId);
+
+    if (deleteDiaryRows) return res.send(response(baseResponse.SUCCESS));
+};

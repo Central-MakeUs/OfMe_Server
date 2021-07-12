@@ -80,6 +80,28 @@ async function selectDiaryImg(connection, dayDiaryId) {
   return selectDiaryRows;
 }
 
+// 다이어리삭제
+async function deleteDiary(connection, dayDiaryId) {
+  const selectQuery = `
+        update DayDiary
+        set status = 'Deleted'
+        where id = ?;
+                `;
+  const [selectDiaryRows] = await connection.query(selectQuery, dayDiaryId);
+  return selectDiaryRows;
+}
+
+// 다이어리이미지삭제
+async function deleteDiaryImg(connection, dayDiaryId) {
+  const selectQuery = `
+        update DayDiaryImg
+        set status = 'Deleted'
+        where dayDiaryId = ?;
+                `;
+  const [selectDiaryRows] = await connection.query(selectQuery, dayDiaryId);
+  return selectDiaryRows;
+}
+
 module.exports = {
   selectDiary,
   insertDiaryInfo,
@@ -87,5 +109,7 @@ module.exports = {
   insertDiaryImg,
   updateDiary,
   updateDiaryImg,
-  selectDiaryImg
+  selectDiaryImg,
+  deleteDiary,
+  deleteDiaryImg
 };

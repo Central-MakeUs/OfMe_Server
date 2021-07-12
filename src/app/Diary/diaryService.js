@@ -16,7 +16,6 @@ const {connect} = require("http2");
 /**
  * API No. 2
  * API Name : 데일리 다이어리 작성 API
- * [POST]] /diarys
  */
 exports.createDiary = async function (userId, title, character, text, img, createAt) {
     try {
@@ -44,7 +43,6 @@ exports.createDiary = async function (userId, title, character, text, img, creat
 /**
  * API No. 3
  * API Name : 데일리 다이어리 수정 API
- * [PATCH] /diarys
  */
 exports.updateDiary = async function (selectDiaryImgRows, id, userId, title, character, text, img, createAt) {
     try {
@@ -62,6 +60,27 @@ exports.updateDiary = async function (selectDiaryImgRows, id, userId, title, cha
         }
         
         connection.release();
+        return response(baseResponse.SUCCESS);
+
+    } catch (err) {
+        logger.error(`App - updateDiary Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+/**
+ * API No. 4
+ * API Name : 데일리 다이어리 삭제 API
+ */
+exports.deleteDiary = async function (diaryId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const deleteDiary = await diaryDao.deleteDiary(connection, diaryId);
+        const deleteDiaryImg = await diaryDao.deleteDiaryImg(connection, diaryId);
+
+        connection.release();
+
         return response(baseResponse.SUCCESS);
 
     } catch (err) {

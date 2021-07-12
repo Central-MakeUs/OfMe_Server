@@ -59,7 +59,7 @@ module.exports = {
     DIARY_IMG_NOT_EXIST : { "isSuccess": false, "code": 3114, "message": "이미지는 최대 4개까지 입니다." },
     DIARY_CHARACTER_NOT_EXIST : { "isSuccess": false, "code": 3115, "message": "캐릭터를 설정해주세요. 캐릭터를 설정하지 않으면 캐릭터인덱스 0을 주십시오." },
     DIARY_USER_NOT_EXIST : { "isSuccess": false, "code": 3116, "message": "권한이 없습니다." },
-
+    DIARY_ID_NOT_EXIST : { "isSuccess": false, "code": 3117, "message": "삭제할 다이어리를 입력해주세요." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
