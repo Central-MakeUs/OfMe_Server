@@ -49,3 +49,11 @@ exports.checkLogoutToken = async function(token) {
 
   return userListResult; 
 }
+
+exports.getUser = async function (userId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getUsers = await userDao.getUser(connection, userId);
+  connection.release();
+
+  return getUsers;
+};
