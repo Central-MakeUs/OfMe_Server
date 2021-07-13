@@ -1,9 +1,10 @@
 // 연도,월,일로 다이어리 조회
 async function selectDiary(connection, userId, createAt) {
   const selectQuery = `
-                SELECT id, userId, conceptId, title, content, date_format(createAt, '%Y-%m-%d') as createAt
+                SELECT DayDiary.id, userId, conceptId, ConceptData.name, title, content, date_format(DayDiary.createAt, '%Y-%m-%d') as createAt
                 FROM DayDiary
-                WHERE userId = ? and date(createAt) = ? and status = 'Activated';
+                INNER JOIN ConceptData ON DayDiary.conceptId = ConceptData.id
+                WHERE userId = ? and date(DayDiary.createAt) = ? and DayDiary.status = 'Activated';
                 `;
   const [selectDiaryRows] = await connection.query(selectQuery, [userId, createAt]);
   return selectDiaryRows;
