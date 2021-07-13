@@ -27,7 +27,7 @@ exports.getConceptStageOne = async function (req, res) {
 /**
  * API No. 2
  * API Name : 2단계 테스트 문제 조회 API
- * [GET] /concepts/stageTwo
+ * [GET] /concepts/stageTwo/:keywordId
  */
 exports.getConceptStageTwo = async function (req, res) {
     const userId = req.verifiedToken.userId;
@@ -56,4 +56,47 @@ exports.getConceptStageThree = async function (req, res) {
     const stageThreeRows = await conceptProvider.selectConceptStageThree();
 
     return res.send(response(baseResponse.SUCCESS, stageThreeRows));
+};
+
+/**
+ * API No. 4
+ * API Name : 컨셉 정보 조회 API
+ * [GET] /concepts/:conceptId
+ */
+exports.getConcept = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const conceptId = req.params.conceptId;
+    const getConceptRows = await conceptProvider.getConcept(conceptId);
+
+    if (getConceptRows.length > 0) return res.send(response(baseResponse.SUCCESS, getConceptRows));
+    else return res.send(response(baseResponse.CONCEPT_NOT_EXIST));
+};
+
+/**
+ * API No. 5
+ * API Name : 컨셉 등록 API
+ * [POST] /concepts/:conceptId
+ */
+exports.postConcept = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const conceptId = req.body.conceptId;
+
+    const getConceptRows = await conceptProvider.getConcept(conceptId);
+    if (getConceptRows.length > 0) {
+        const selectConceptIngRows = await conceptProvider.selectConceptIng(conceptId);
+
+        if (selectConceptIngRows.length > 0)
+            return res.send(response(baseResponse.CONCEPT_POST_EXIST));
+        const createConceptRows = await conceptService.createConcept(userId, conceptId);
+        return res.send(response(baseResponse.SUCCESS));
+    } else
+        return res.send(response(baseResponse.CONCEPT_POST_NOT_EXIST));
 };

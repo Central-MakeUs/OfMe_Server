@@ -32,8 +32,44 @@ ORDER BY rand() LIMIT 1;
   return ConceptStageRows;
 }
 
+// 컨셉 정보 조회
+async function selectConcept(connection, conceptId) {
+  const ConceptQuery = `
+select ConceptData.id, conceptImg, name, subName, description, advantage, habit, behavior, value, music
+from ConceptData
+inner join ConceptImage on ConceptImage.conceptId = ConceptData.id
+where ConceptData.id = ? and ConceptData.status = 'Activated';
+                `;
+  const [ConceptRows] = await connection.query(ConceptQuery, conceptId);
+  return ConceptRows;
+}
+
+// 컨셉 등록
+async function insertConcept(connection, insertConceptParams) {
+  const ConceptQuery = `
+insert into UserConcept(userId, conceptId)
+values (?, ?);
+                `;
+  const [ConceptRows] = await connection.query(ConceptQuery, insertConceptParams);
+  return ConceptRows;
+}
+
+// 컨셉 이미 진행중인지 확인
+async function selectConceptIng(connection, userId) {
+  const ConceptQuery = `
+select *
+from UserConcept
+where userId = ? and (status = 'Activated' OR status = 'Stop')
+                `;
+  const [ConceptRows] = await connection.query(ConceptQuery, userId);
+  return ConceptRows;
+}
+
 module.exports = {
   selectConceptStageOne,
   selectConceptStageTwo,
   selectConceptStageThree,
+  selectConcept,
+  insertConcept,
+  selectConceptIng,
 };

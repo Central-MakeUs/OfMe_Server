@@ -26,3 +26,17 @@ exports.selectConceptStageThree = async function () {
 
   return conceptStageThreeResult;
 };
+exports.getConcept = async function (conceptId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const conceptResult = await conceptDao.selectConcept(connection, conceptId);
+  connection.release();
+
+  return conceptResult;
+};
+exports.selectConceptIng = async function (userId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const conceptResult = await conceptDao.selectConceptIng(connection, userId);
+  connection.release();
+
+  return conceptResult;
+};

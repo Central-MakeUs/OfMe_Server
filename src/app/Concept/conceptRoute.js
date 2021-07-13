@@ -10,4 +10,10 @@ module.exports = function(app){
 
     // 3. 3단계 테스트 문제 조회 API
     app.get('/concepts/stageThree', jwtMiddleware, concept.getConceptStageThree);
+
+    // 4. 컨셉 정보 조회 API
+    app.get('/concepts/:conceptId', jwtMiddleware, concept.getConcept);
+
+    // 5. 컨셉 등록 API
+    app.post('/concepts', jwtMiddleware, concept.postConcept);
 };
