@@ -1,10 +1,11 @@
 // 컨셉 스테이지 1번 조회
-async function selectConceptStageOne(stage) {
+async function selectConceptStageOne(connection) {
   const ConceptStageQuery = `
-                SELECT email, nickname 
-                FROM UserInfo;
+select id, keyword
+from ConceptTest1
+where status = 'Activated';
                 `;
-  const [ConceptStageRows] = await connection.query(ConceptStageQuery, stage);
+  const [ConceptStageRows] = await connection.query(ConceptStageQuery);
   return ConceptStageRows;
 }
 
