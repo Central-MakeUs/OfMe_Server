@@ -6,7 +6,7 @@ module.exports = function(app){
     app.get('/concepts/stageOne', jwtMiddleware, concept.getConceptStageOne);
     
     // 2. 2단계 테스트 문제 조회 API
-    app.get('/concepts/stageTwo', jwtMiddleware, concept.getConceptStageTwo);
+    app.get('/concepts/stageTwo/:keywordId', jwtMiddleware, concept.getConceptStageTwo);
 
     // 3. 3단계 테스트 문제 조회 API
     app.get('/concepts/stageThree', jwtMiddleware, concept.getConceptStageThree);

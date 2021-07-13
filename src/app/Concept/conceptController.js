@@ -35,8 +35,11 @@ exports.getConceptStageTwo = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
+    const keywordId = req.params.keywordId;
+    const stageTwoRows = await conceptProvider.selectConceptStageTwo(keywordId);
 
-    return res.send(response(baseResponse.SUCCESS, selectDiaryRows));
+    if (stageTwoRows.length < 1) return res.send(response(baseResponse.CONCEPT_KEYWORD_NOT_EXIST));
+    else return res.send(response(baseResponse.SUCCESS, stageTwoRows));
 };
 
 /**
@@ -50,7 +53,7 @@ exports.getConceptStageThree = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
+    const stageThreeRows = await conceptProvider.selectConceptStageThree();
 
-
-    return res.send(signUpResponse);
+    return res.send(response(baseResponse.SUCCESS, stageTwoRows));
 };

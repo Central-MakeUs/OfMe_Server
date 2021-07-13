@@ -52,8 +52,8 @@ module.exports = {
     LOGOUT_ALREADY_LOGOUT : { "isSuccess": false, "code": 3009, "message": "이미 로그아웃된 토큰입니다." },
 
     // 컨셉 error
-    CONCEPT_NOT_EXIST : { "isSuccess": false, "code": 3020, "message": "조회할 컨셉 스테이지를 입력하세요." },
-    CONCEPT_STAGE_NOT_EXIST : { "isSuccess": false, "code": 3020, "message": "조회할 스테이지가 없습니다. 1, 2, 3 중에 입력해주세요." },
+    CONCEPT_KEYWORD_NOT_EXIST : { "isSuccess": false, "code": 3020, "message": "키워드가 없습니다. 정확히 입력해주세요." },
+    CONCEPT__NOT_EXIST : { "isSuccess": false, "code": 3020, "message": "조회할 스테이지가 없습니다. 1, 2, 3 중에 입력해주세요." },
 
     // 다이어리 error
     DIARY_NOT_EXIST : { "isSuccess": false, "code": 3110, "message": "작성된 다이어리가 없습니다." },

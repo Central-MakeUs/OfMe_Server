@@ -10,12 +10,13 @@ where status = 'Activated';
 }
 
 // 컨셉 스테이지 2번 조회
-async function selectConceptStageTwo(stage) {
+async function selectConceptStageTwo(connection, keywordId) {
   const ConceptStageQuery = `
-                SELECT email, nickname 
-                FROM UserInfo;
+select id, keywordId, question, highlight, answer1, answer2, answer3, answer4
+from ConceptTest2
+where keywordId = ? and status = 'Activated';
                 `;
-  const [ConceptStageRows] = await connection.query(ConceptStageQuery, stage);
+  const [ConceptStageRows] = await connection.query(ConceptStageQuery, keywordId);
   return ConceptStageRows;
 }
 
