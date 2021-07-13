@@ -19,3 +19,10 @@ exports.selectConceptStageTwo = async function (keywordId) {
 
   return conceptStageTwoResult;
 };
+exports.selectConceptStageThree = async function () {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const conceptStageThreeResult = await conceptDao.selectConceptStageThree(connection);
+  connection.release();
+
+  return conceptStageThreeResult;
+};

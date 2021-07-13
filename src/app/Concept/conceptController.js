@@ -55,5 +55,5 @@ exports.getConceptStageThree = async function (req, res) {
 
     const stageThreeRows = await conceptProvider.selectConceptStageThree();
 
-    return res.send(response(baseResponse.SUCCESS, stageTwoRows));
+    return res.send(response(baseResponse.SUCCESS, stageThreeRows));
 };
