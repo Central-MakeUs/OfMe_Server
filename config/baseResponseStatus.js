@@ -54,13 +54,21 @@ module.exports = {
     SIGNIN_ALREADY_LOGIN : { "isSuccess": false, "code": 3008, "message": "이미 로그인된 유저입니다." },
     LOGOUT_ALREADY_LOGOUT : { "isSuccess": false, "code": 3009, "message": "이미 로그아웃된 토큰입니다." },
 
+    // 컨셉 error
+    CONCEPT_KEYWORD_NOT_EXIST : { "isSuccess": false, "code": 3020, "message": "키워드가 없습니다. 정확히 입력해주세요." },
+    CONCEPT_NOT_EXIST : { "isSuccess": false, "code": 3021, "message": "조회할 컨셉이 없습니다. 정확하게 입력해주세요." },
+    CONCEPT_POST_NOT_EXIST : { "isSuccess": false, "code": 3022, "message": "등록할 컨셉이 존재하지 않습니다. 정확하게 입력해주세요." },
+    CONCEPT_POST_EXIST : { "isSuccess": false, "code": 3023, "message": "컨셉이 이미 진행중 입니다. 종료하고 다시 시도해주세요." },
+
     // 다이어리 error
     DIARY_NOT_EXIST : { "isSuccess": false, "code": 3110, "message": "작성된 다이어리가 없습니다." },
     DIARY_TITLE_NOT_EXIST : { "isSuccess": false, "code": 3111, "message": "타이틀을 입력해주세요." },
     DIARY_TEXT_NOT_EXIST : { "isSuccess": false, "code": 3112, "message": "내용을 입력해주세요." },
     DIARY_CREATEAT_NOT_EXIST : { "isSuccess": false, "code": 3113, "message": "날짜를 선택해주세요." },
     DIARY_IMG_NOT_EXIST : { "isSuccess": false, "code": 3114, "message": "이미지는 최대 4개까지 입니다." },
-
+    DIARY_CHARACTER_NOT_EXIST : { "isSuccess": false, "code": 3115, "message": "캐릭터를 설정해주세요. 캐릭터를 설정하지 않으면 캐릭터인덱스 0을 주십시오." },
+    DIARY_USER_NOT_EXIST : { "isSuccess": false, "code": 3116, "message": "권한이 없습니다." },
+    DIARY_ID_NOT_EXIST : { "isSuccess": false, "code": 3117, "message": "삭제할 다이어리를 입력해주세요." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
