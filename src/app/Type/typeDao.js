@@ -82,6 +82,17 @@ async function selectTypeTests(connection) {
   return selectTypeTestsRows;
 }
 
+// 나의 성향 알기 테스트 결과 조회
+async function selectTypeResultFromTest(connection, EIvalue, NSvalue, TFvalue, PJvalue) {
+  const selectTypeResultFromTestQuery = `
+              SELECT id as typeId, subName, name, highlight, keyword, description1, description2
+              FROM TypeData
+              WHERE EI= ? and NS = ? and TF = ? and PJ = ?;
+                `;
+  const [selectTypeResultFromTestRows] = await connection.query(selectTypeResultFromTestQuery, [EIvalue, NSvalue, TFvalue, PJvalue]);
+  return selectTypeResultFromTestRows[0];
+}
+
 module.exports = {
   selectUser,
   selectUserEmail,
@@ -90,5 +101,6 @@ module.exports = {
   selectTypes,
   selectTypeResult,
   postUserType,
-  selectTypeTests
+  selectTypeTests,
+  selectTypeResultFromTest
 };

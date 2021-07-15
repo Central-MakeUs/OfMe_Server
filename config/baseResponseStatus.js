@@ -37,6 +37,9 @@ module.exports = {
     LOGIN_PASSWORD_LENGTH : { "isSuccess": false, "code": 2021, "message":"비밀번호는 8~20자리를 입력해주세요." },
     USERTYPE_TYPEID_EMPTY : { "isSuccess": false, "code": 2022, "message":"typeId를 입력해주세요." },
     USERTYPE_TYPEID_ERROR : { "isSuccess": false, "code": 2023, "message": "typeId는 1~16 사이의 값을 입력해주세요."},
+    USERTYPE_ANSWER_ERROR : { "isSuccess": false, "code": 2024, "message": "body의 value 값 형식이 올바르지 않습니다."},
+    USERTYPE_ANSWER_LENGTH : { "isSuccess": false, "code": 2025, "message": "body의 value의 개수가 3개가 아닙니다."},
+    USERTYPE_ANSWER_EMPTY : { "isSuccess": false, "code": 2026, "message": "EI, NS, TF, PJ 질문의 답변을 모두 입력해주세요."},
 
 
 
