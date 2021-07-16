@@ -30,8 +30,6 @@ exports.retrieveTypeTests = async function() {
   //   (typeTestListResult[i].question).replace(/\-/g,'');
   // }
 
-  console.log(typeTestListResult);
-
   connection.release();
 
   return response(baseResponse.SUCCESS, typeTestListResult);
