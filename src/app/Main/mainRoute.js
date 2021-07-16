@@ -2,11 +2,11 @@ module.exports = function(app){
     const main = require('./mainController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
 
-    // 1. 데일리 다이어리 조회 API
+    // 1. 메인화면 조회 API (캐릭터)
     app.get('/characters', jwtMiddleware, main.getCharacters);
 
-    // 2. 데일리 다이어리 작성 API
-    app.post('/diarys', jwtMiddleware, main.postDiarys);
+    // 4. 컨셉 사용 종료 API
+    app.patch('/characters/ends', jwtMiddleware, main.patchCharactersEnd);
 
     // 3. 데일리 다이어리 수정 API
     app.patch('/diarys', jwtMiddleware, main.patchDiarys);

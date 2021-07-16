@@ -26,30 +26,19 @@ exports.getCharacters = async function (req, res) {
 };
 
 /**
- * API No. 2
- * API Name : 데일리 다이어리 작성 API
- * [POST] /diarys
+ * API No. 4
+ * API Name : 컨셉 사용 종료 API
+ * [PATCH] /characters/ends
  */
-exports.postDiarys = async function (req, res) {
-    /**
-     * body: title, character, text, img, createAt
-     */
+exports.patchCharactersEnd = async function (req, res) {
     const userId = req.verifiedToken.userId;
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const {title, character, text, img, createAt} = req.body;
-
-    if (!title) return res.send(response(baseResponse.DIARY_TITLE_NOT_EXIST));
-    else if (!text) return res.send(response(baseResponse.DIARY_TEXT_NOT_EXIST));
-    else if (!createAt) return res.send(response(baseResponse.DIARY_CREATEAT_NOT_EXIST));
-    else if (!character) return res.send(response(baseResponse.DIARY_CHARACTER_NOT_EXIST));
-    else if (img.length > 4) return res.send(response(baseResponse.DIARY_IMG_NOT_EXIST));
-
-    const createDiaryRows = await diaryService.createDiary(userId, title, character, text, img, createAt);
-
-    if(createDiaryRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
+    const updateCharactersEndRows = await mainService.updateCharactersEnd(userId);
+    console.log(updateCharactersEndRows);
+    if(updateCharactersEndRows.affectedRows === 0) return res.send(response(baseResponse.MAIN_CHARACTER_NOT_EXIST));
     else return res.send(response(baseResponse.SUCCESS));
 };
 

@@ -14,25 +14,18 @@ const {connect} = require("http2");
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
 /**
- * API No. 2
- * API Name : 데일리 다이어리 작성 API
+ * API No. 4
+ * API Name : 컨셉 사용 종료 API
  */
-exports.createDiary = async function (userId, title, character, text, img, createAt) {
+exports.updateCharactersEnd = async function (userId) {
     try {
-        const insertDiaryParams = [userId, title, character, text, createAt];
-        let DiaryImgList = [];
+        const updateParams = [userId];
         const connection = await pool.getConnection(async (conn) => conn);
 
-        const DiaryResult = await diaryDao.insertDiaryInfo(connection, insertDiaryParams);
-        if (img.length > 0) {
-            for (i in img){
-                DiaryImgList.push([DiaryResult.insertId, createAt, img[i]]);
-            }
+        const DiaryResult = await mainDao.updateCharactersEnd(connection, updateParams);
 
-            await diaryDao.insertDiaryImg(connection, [DiaryImgList]);
-        }
         connection.release();
-        return response(baseResponse.SUCCESS);
+        return DiaryResult;
 
     } catch (err) {
         logger.error(`App - createDiary Service error\n: ${err.message}`);
