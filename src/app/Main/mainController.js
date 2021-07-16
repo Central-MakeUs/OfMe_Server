@@ -26,6 +26,24 @@ exports.getCharacters = async function (req, res) {
 };
 
 /**
+ * API No. 2
+ * API Name : 액션에 따른 행동이미지 조회 API
+ * [GET] /characters/actions
+ */
+exports.selectActions = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const selectCharactersRows = await mainProvider.selectCharacters(userId);
+    if(selectCharactersRows.length < 1) return res.send(response(baseResponse.MAIN_CHARACTER_NOT_EXIST));
+    
+    const selectActionsRows = await mainProvider.selectActions(selectCharactersRows[0].id);
+    return res.send(response(baseResponse.SUCCESS, selectActionsRows));
+};
+
+/**
  * API No. 3
  * API Name : 컨셉 시간 저장 API
  * [PATCH] /characters/timers
@@ -95,7 +113,7 @@ exports.patchRating = async function (req, res) {
         return res.send(response(baseResponse.MAIN_INT_STAR_NOT_EXIST));
 
     const selectmainIdRows = await mainProvider.selectmainId(conceptId);
-    console.log(selectmainIdRows[0].userId);
+
     if (selectmainIdRows[0].userId != userId)
         return res.send(response(baseResponse.DIARY_USER_NOT_EXIST));
 

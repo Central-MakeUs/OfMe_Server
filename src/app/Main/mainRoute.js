@@ -5,6 +5,9 @@ module.exports = function(app){
     // 1. 메인화면 조회 API (캐릭터)
     app.get('/characters', jwtMiddleware, main.getCharacters);
 
+    // 2. 액션에 따른 행동이미지 조회 API
+    app.get('/characters/actions', jwtMiddleware, main.selectActions);
+
     // 3. 컨셉 시간 저장 API
     app.patch('/characters/timers', jwtMiddleware, main.patchCharactersTimer);
 

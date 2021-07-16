@@ -29,8 +29,7 @@ exports.selectCharactersId = async function (userId) {
   return selectCharactersIdRows;
 };
 /**
- * API Name : 
- * 평점등록할 인덱스와 같은 사람인지 확인
+ * API Name : 평점등록할 인덱스와 같은 사람인지 확인
  */
 exports.selectmainId = async function (conceptId) {
   const connection = await pool.getConnection(async (conn) => conn);
@@ -39,4 +38,15 @@ exports.selectmainId = async function (conceptId) {
   connection.release();
 
   return selectmainIdRows;
+};
+/**
+ * API Name : 평점등록할 인덱스와 같은 사람인지 확인
+ */
+exports.selectActions = async function (conceptId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectActionsRows = await mainDao.selectActions(connection, conceptId);
+
+  connection.release();
+
+  return selectActionsRows;
 };

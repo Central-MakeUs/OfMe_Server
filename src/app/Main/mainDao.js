@@ -64,6 +64,16 @@ where id = ?;
   return selectmainIdRow;
 }
 
+async function selectActions(connection, conceptId) {
+  const selectmainIdQuery = `
+select ActionName, ActionImg
+from ActionItem
+where conceptImageId = ? and status = 'Activated';
+                `;
+  const [selectmainIdRow] = await connection.query(selectmainIdQuery, conceptId);
+  return selectmainIdRow;
+}
+
 module.exports = {
   selectCharacters,
   updateCharactersEnd,
@@ -71,4 +81,5 @@ module.exports = {
   selectCharactersId,
   updateRating,
   selectmainId,
+  selectActions,
 };
