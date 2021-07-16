@@ -57,6 +57,9 @@ module.exports = {
     CONCEPT_POST_NOT_EXIST : { "isSuccess": false, "code": 3022, "message": "등록할 컨셉이 존재하지 않습니다. 정확하게 입력해주세요." },
     CONCEPT_POST_EXIST : { "isSuccess": false, "code": 3023, "message": "컨셉이 이미 진행중 입니다. 종료하고 다시 시도해주세요." },
 
+    // 메인 error
+    MAIN_CHARACTER_NOT_EXIST : { "isSuccess": false, "code": 3030, "message": "진행중인 컨셉이 없습니다. 컨셉을 먼저 정해주세요." },
+
     // 다이어리 error
     DIARY_NOT_EXIST : { "isSuccess": false, "code": 3110, "message": "작성된 다이어리가 없습니다." },
     DIARY_TITLE_NOT_EXIST : { "isSuccess": false, "code": 3111, "message": "타이틀을 입력해주세요." },

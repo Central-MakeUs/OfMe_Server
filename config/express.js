@@ -22,6 +22,7 @@ module.exports = function () {
     require('../src/app/Type/typeRoute')(app);
     require('../src/app/Diary/diaryRoute')(app);
     require('../src/app/Concept/conceptRoute')(app);
+    require('../src/app/Main/mainRoute')(app);
 
     return app;
 };
