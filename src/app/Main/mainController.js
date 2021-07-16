@@ -26,6 +26,29 @@ exports.getCharacters = async function (req, res) {
 };
 
 /**
+ * API No. 3
+ * API Name : 컨셉 시간 저장 API
+ * [PATCH] /characters/timers
+ */
+exports.patchCharactersTimer = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const timer = req.body;
+
+    if (!timer)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+    
+
+    const updateCharactersTimerRows = await mainService.updateCharactersTimer(userId, timer.timer);
+    if(updateCharactersTimerRows.affectedRows === 0) return res.send(response(baseResponse.MAIN_CHARACTER_NOT_EXIST));
+
+    else return res.send(response(baseResponse.SUCCESS));
+};
+
+/**
  * API No. 4
  * API Name : 컨셉 사용 종료 API
  * [PATCH] /characters/ends
@@ -35,70 +58,51 @@ exports.patchCharactersEnd = async function (req, res) {
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+    
+    const timer = req.body;
 
-    const updateCharactersEndRows = await mainService.updateCharactersEnd(userId);
-    console.log(updateCharactersEndRows);
+    if (!timer)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const updateCharactersEndRows = await mainService.updateCharactersEnd(userId, timer.timer);
+
     if(updateCharactersEndRows.affectedRows === 0) return res.send(response(baseResponse.MAIN_CHARACTER_NOT_EXIST));
-    else return res.send(response(baseResponse.SUCCESS));
+    
+    
+    const selectCharactersIdRows = await mainProvider.selectCharactersId(userId);
+    return res.send(response(baseResponse.SUCCESS, selectCharactersIdRows));
 };
-
 /**
- * API No. 3
- * API Name : 데일리 다이어리 수정 API
- * [PATCH] /diarys
+ * API No. 5
+ * API Name : 컨셉 평점 등록 API
+ * [PATCH] /characters/ratings
  */
-exports.patchDiarys = async function (req, res) {
-    /**
-     * body: title, character, text, createAt, img, diaryId
-     */
+exports.patchRating = async function (req, res) {
     const userId = req.verifiedToken.userId;
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+    
+    const {conceptId, conceptPoint} = req.body;
 
-    const {title, character, text, createAt, img, diaryId} = req.body;
+    if (!conceptId)
+        return res.send(response(baseResponse.MAIN_CONCEPT_NOT_EXIST));
+    else if (!conceptPoint)
+        return res.send(response(baseResponse.MAIN_STAR_NOT_EXIST));
+    else if (!Number.isInteger(conceptPoint))
+        return res.send(response(baseResponse.MAIN_INT_STAR_NOT_EXIST));
+    else if (0 >= conceptPoint || conceptPoint >= 6)
+        return res.send(response(baseResponse.MAIN_INT_STAR_NOT_EXIST));
 
-    if (!title) return res.send(response(baseResponse.DIARY_TITLE_NOT_EXIST));
-    else if (!text) return res.send(response(baseResponse.DIARY_TEXT_NOT_EXIST));
-    else if (!createAt) return res.send(response(baseResponse.DIARY_CREATEAT_NOT_EXIST));
-    else if (!character) return res.send(response(baseResponse.DIARY_CHARACTER_NOT_EXIST));
-    else if (img.length > 4) return res.send(response(baseResponse.DIARY_IMG_NOT_EXIST));
+    const selectmainIdRows = await mainProvider.selectmainId(conceptId);
+    console.log(selectmainIdRows[0].userId);
+    if (selectmainIdRows[0].userId != userId)
+        return res.send(response(baseResponse.DIARY_USER_NOT_EXIST));
 
-    const selectDiaryIdRows = await diaryProvider.selectDiaryId(userId, diaryId);
+    const patchRatingRows = await mainService.patchRating(conceptId, conceptPoint);
 
-    if (selectDiaryIdRows[0].userId != userId) return res.send(response(baseResponse.DIARY_USER_NOT_EXIST));
-    else if(selectDiaryIdRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
-
-    const selectDiaryImgRows = await diaryProvider.selectDiaryImg(diaryId);
-
-    const updateDiaryRows = await diaryService.updateDiary(selectDiaryImgRows, diaryId, userId, title, character, text, img, createAt);
-
-    if (updateDiaryRows) return res.send(response(baseResponse.SUCCESS));
-};
-
-/**
- * API No. 4
- * API Name : 데일리 다이어리 삭제 API
- * [PATCH] /diarys/:diaryId
- */
-exports.deleteDiarys = async function (req, res) {
-    /**
-     * params: diaryId
-     */
-    const userId = req.verifiedToken.userId;
-    const userRows = await userProvider.getUser(userId);
-    if (!userRows)
-        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
-
-    const diaryId = req.params.diaryId;
-
-    if (!diaryId) return res.send(response(baseResponse.DIARY_ID_NOT_EXIST));
-
-    const selectDiaryIdRows = await diaryProvider.selectDiaryId(userId, diaryId);
-    if (selectDiaryIdRows[0].userId != userId) return res.send(response(baseResponse.DIARY_USER_NOT_EXIST));
-    else if(selectDiaryIdRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
-
-    const deleteDiaryRows = await diaryService.deleteDiary(diaryId);
-
-    if (deleteDiaryRows) return res.send(response(baseResponse.SUCCESS));
+    if(patchRatingRows.affectedRows === 0)
+        return res.send(response(baseResponse.MAIN_CHARACTER_NOT_EXIST));
+    
+    return res.send(response(baseResponse.SUCCESS));
 };

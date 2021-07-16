@@ -14,70 +14,61 @@ const {connect} = require("http2");
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
 /**
+ * API No. 3
+ * API Name : 컨셉 시간 저장 API
+ */
+exports.updateCharactersTimer = async function (userId, timer) {
+    try {
+        const updateParams = [timer, userId];
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const updateCharactersTimerResult = await mainDao.updateCharactersTimer(connection, updateParams);
+
+        connection.release();
+        return updateCharactersTimerResult;
+
+    } catch (err) {
+        logger.error(`App - createMain Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+/**
  * API No. 4
  * API Name : 컨셉 사용 종료 API
  */
-exports.updateCharactersEnd = async function (userId) {
+exports.updateCharactersEnd = async function (userId, timer) {
     try {
-        const updateParams = [userId];
+        const updateParams = [timer, userId];
         const connection = await pool.getConnection(async (conn) => conn);
 
-        const DiaryResult = await mainDao.updateCharactersEnd(connection, updateParams);
+        const updateCharactersEndResult = await mainDao.updateCharactersEnd(connection, updateParams);
 
         connection.release();
-        return DiaryResult;
+        return updateCharactersEndResult;
 
     } catch (err) {
-        logger.error(`App - createDiary Service error\n: ${err.message}`);
+        logger.error(`App - createMain Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };
 
 /**
- * API No. 3
- * API Name : 데일리 다이어리 수정 API
+ * API No. 5
+ * API Name : 컨셉 평점 등록 API
  */
-exports.updateDiary = async function (selectDiaryImgRows, id, userId, title, character, text, img, createAt) {
+exports.patchRating = async function (conceptId, conceptPoint) {
     try {
-        const insertDiaryParams = [title, character, text, createAt, id];
-        let DiaryImgList = [];
+        const updateParams = [conceptPoint, conceptId];
         const connection = await pool.getConnection(async (conn) => conn);
 
-        const updateDiary = await diaryDao.updateDiary(connection, insertDiaryParams);
-
-        if (selectDiaryImgRows.length > 0) {
-            for (i in img){
-                DiaryImgList = [createAt, img[i], selectDiaryImgRows[i].id];
-                await diaryDao.updateDiaryImg(connection, DiaryImgList);
-            }
-        }
-        
-        connection.release();
-        return response(baseResponse.SUCCESS);
-
-    } catch (err) {
-        logger.error(`App - updateDiary Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
-    }
-};
-
-/**
- * API No. 4
- * API Name : 데일리 다이어리 삭제 API
- */
-exports.deleteDiary = async function (diaryId) {
-    try {
-        const connection = await pool.getConnection(async (conn) => conn);
-
-        const deleteDiary = await diaryDao.deleteDiary(connection, diaryId);
-        const deleteDiaryImg = await diaryDao.deleteDiaryImg(connection, diaryId);
+        const updateRatingResult = await mainDao.updateRating(connection, updateParams);
 
         connection.release();
-
-        return response(baseResponse.SUCCESS);
+        return updateRatingResult;
 
     } catch (err) {
-        logger.error(`App - updateDiary Service error\n: ${err.message}`);
+        logger.error(`App - createMain Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

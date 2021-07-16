@@ -6,8 +6,8 @@ const mainDao = require("./mainDao");
 
 /**
  * API No. 1
- * API Name : 데일리 다이어리 조회 API
- * [GET] /diarys?year=&months=&days=
+ * API Name : 메인화면 조회 API (캐릭터)
+ * [GET] /characters
  */
 exports.selectCharacters = async function (userId, createAt) {
   const connection = await pool.getConnection(async (conn) => conn);
@@ -19,25 +19,24 @@ exports.selectCharacters = async function (userId, createAt) {
 };
 /**
  * API Name : 데일리 다이어리 수정 API
- * 다이어리 작성자와 수정할 사용자와 같은 사람인지 확인
  */
-exports.selectDiaryId = async function (diaryId) {
+exports.selectCharactersId = async function (userId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const selectDiaryIdRows = await diaryDao.selectDiaryId(connection, diaryId);
+  const selectCharactersIdRows = await mainDao.selectCharactersId(connection, userId);
 
   connection.release();
 
-  return selectDiaryIdRows;
+  return selectCharactersIdRows;
 };
 /**
- * API Name : 데일리 다이어리 수정 API
- * 수정할 다이어리 이미지 불러오기
+ * API Name : 
+ * 평점등록할 인덱스와 같은 사람인지 확인
  */
-exports.selectDiaryImg = async function (diaryId) {
+exports.selectmainId = async function (conceptId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const selectDiaryImgRows = await diaryDao.selectDiaryImg(connection, diaryId);
+  const selectmainIdRows = await mainDao.selectmainId(connection, conceptId);
 
   connection.release();
 
-  return selectDiaryImgRows;
+  return selectmainIdRows;
 };

@@ -1,4 +1,3 @@
-// 연도,월,일로 다이어리 조회
 async function selectCharacters(connection, userId) {
   const selectQuery = `
 select User.nickname, ConceptData.name, ConceptData.id, ConceptImage.conceptImg, UserConcept.timer
@@ -12,11 +11,10 @@ where UserConcept.userId = ? and UserConcept.status = 'Activated';
   return selectCharactersRows;
 }
 
-// 다이어리 작성
 async function updateCharactersEnd(connection, updateParams) {
   const updateCharactersQuery = `
 update UserConcept
-set status = 'End'
+set status = 'End', timer = ?
 where userId = ? and status = 'Activated'
 order by id DESC limit 1;
                 `;
@@ -24,7 +22,53 @@ order by id DESC limit 1;
   return updateCharactersEndRow;
 }
 
+async function updateCharactersTimer(connection, updateParams) {
+  const updateCharactersQuery = `
+update UserConcept
+set timer = ?
+where userId = ? and status = 'Activated'
+order by id DESC limit 1;
+                `;
+  const [updateCharactersTimerRow] = await connection.query(updateCharactersQuery, updateParams);
+  return updateCharactersTimerRow;
+}
+
+async function selectCharactersId(connection, Params) {
+  const selectCharactersIdQuery = `
+select id
+from UserConcept
+where userId = ?
+order by id DESC limit 1;
+                `;
+  const [selectCharactersIdRow] = await connection.query(selectCharactersIdQuery, Params);
+  return selectCharactersIdRow;
+}
+
+async function updateRating(connection, Params) {
+  const updateRatingQuery = `
+update UserConcept
+set conceptPoint = ?
+where id = ?;
+                `;
+  const [updateRatingRow] = await connection.query(updateRatingQuery, Params);
+  return updateRatingRow;
+}
+
+async function selectmainId(connection, conceptId) {
+  const selectmainIdQuery = `
+select userId
+from UserConcept
+where id = ?;
+                `;
+  const [selectmainIdRow] = await connection.query(selectmainIdQuery, conceptId);
+  return selectmainIdRow;
+}
+
 module.exports = {
   selectCharacters,
   updateCharactersEnd,
+  updateCharactersTimer,
+  selectCharactersId,
+  updateRating,
+  selectmainId,
 };

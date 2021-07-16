@@ -5,14 +5,14 @@ module.exports = function(app){
     // 1. 메인화면 조회 API (캐릭터)
     app.get('/characters', jwtMiddleware, main.getCharacters);
 
+    // 3. 컨셉 시간 저장 API
+    app.patch('/characters/timers', jwtMiddleware, main.patchCharactersTimer);
+
     // 4. 컨셉 사용 종료 API
     app.patch('/characters/ends', jwtMiddleware, main.patchCharactersEnd);
 
-    // 3. 데일리 다이어리 수정 API
-    app.patch('/diarys', jwtMiddleware, main.patchDiarys);
-    
-    // 3. 데일리 다이어리 삭제 API
-    app.delete('/diarys/:diaryId', jwtMiddleware, main.deleteDiarys);
+    // 5. 컨셉 평점 등록 API
+    app.patch('/characters/ratings', jwtMiddleware, main.patchRating);
 };
 
 
