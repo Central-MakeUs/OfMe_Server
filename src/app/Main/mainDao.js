@@ -1,11 +1,12 @@
 async function selectCharacters(connection, userId) {
   const selectQuery = `
-select User.nickname, ConceptData.name, ConceptData.id, ConceptImage.conceptImg, UserConcept.timer
+select User.nickname, ConceptData.name, ConceptData.id, ConceptImage.url, UserConcept.timer
 from UserConcept
 inner join User on User.id = UserConcept.userId
 inner join ConceptData on ConceptData.id = UserConcept.conceptId
 inner join ConceptImage on ConceptImage.conceptId = ConceptData.id
-where UserConcept.userId = ? and UserConcept.status = 'Activated';
+where UserConcept.userId = ? and UserConcept.status = 'Activated'
+limit 1;
                 `;
   const [selectCharactersRows] = await connection.query(selectQuery, userId);
   return selectCharactersRows;
@@ -66,9 +67,9 @@ where id = ?;
 
 async function selectActions(connection, conceptId) {
   const selectmainIdQuery = `
-select ActionName, ActionImg
-from ActionItem
-where conceptImageId = ? and status = 'Activated';
+select id, situation, url
+from ConceptImage
+where ConceptId = ? and status = 'Activated';
                 `;
   const [selectmainIdRow] = await connection.query(selectmainIdQuery, conceptId);
   return selectmainIdRow;

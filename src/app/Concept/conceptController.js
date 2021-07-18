@@ -100,3 +100,16 @@ exports.postConcept = async function (req, res) {
     } else
         return res.send(response(baseResponse.CONCEPT_POST_NOT_EXIST));
 };
+
+/**
+ * API No. 6
+ * API Name : 모든 컨셉 인덱스 조회 API
+ * [GET] /concepts/all
+ */
+exports.getConceptId = async function (req, res) {
+    const getConceptIdRows = await conceptProvider.getConceptId();
+    if (getConceptIdRows.length > 0) {
+        return res.send(response(baseResponse.SUCCESS, getConceptIdRows));
+    } else
+        return res.send(response(baseResponse.DB_ERROR));
+};

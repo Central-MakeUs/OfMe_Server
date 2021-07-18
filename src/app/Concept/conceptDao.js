@@ -35,10 +35,10 @@ ORDER BY rand() LIMIT 1;
 // 컨셉 정보 조회
 async function selectConcept(connection, conceptId) {
   const ConceptQuery = `
-select ConceptData.id, conceptImg, name, subName, description, advantage, habit, behavior, value, music
+select ConceptData.id, url, name, subName, description, advantage, habit, behavior, value, music
 from ConceptData
 inner join ConceptImage on ConceptImage.conceptId = ConceptData.id
-where ConceptData.id = ? and ConceptData.status = 'Activated';
+where ConceptData.id = ? and ConceptData.status = 'Activated' limit 1;
                 `;
   const [ConceptRows] = await connection.query(ConceptQuery, conceptId);
   return ConceptRows;
@@ -64,7 +64,16 @@ where userId = ? and (status = 'Activated' OR status = 'Stop')
   const [ConceptRows] = await connection.query(ConceptQuery, userId);
   return ConceptRows;
 }
-
+// 컨셉 인덱스 불러오기
+async function selectConceptId(connection) {
+  const ConceptQuery = `
+select id, name
+from ConceptData
+where status = 'Activated'
+                `;
+  const [ConceptRows] = await connection.query(ConceptQuery);
+  return ConceptRows;
+}
 module.exports = {
   selectConceptStageOne,
   selectConceptStageTwo,
@@ -72,4 +81,5 @@ module.exports = {
   selectConcept,
   insertConcept,
   selectConceptIng,
+  selectConceptId
 };

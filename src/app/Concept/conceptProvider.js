@@ -40,3 +40,10 @@ exports.selectConceptIng = async function (userId) {
 
   return conceptResult;
 };
+exports.getConceptId = async function () {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getConceptIdResult = await conceptDao.selectConceptId(connection);
+  connection.release();
+
+  return getConceptIdResult;
+};
