@@ -23,6 +23,8 @@ module.exports = function () {
     require('../src/app/Diary/diaryRoute')(app);
     require('../src/app/Concept/conceptRoute')(app);
     require('../src/app/Main/mainRoute')(app);
-
+    require('../src/app/Mypage/mypageRoute')(app);
+    require('../src/app/QnA/qnaRoute')(app);
+    
     return app;
 };
