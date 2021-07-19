@@ -1,8 +1,8 @@
 const {logger} = require("../../../config/winston");
 const {pool} = require("../../../config/database");
 const secret_config = require("../../../config/secret");
-const conceptProvider = require("./mypageProvider");
-const conceptDao = require("./mypageDao");
+const mypageProvider = require("./mypageProvider");
+const mypageDao = require("./mypageDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
@@ -13,14 +13,36 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.createConcept = async function (userId, conceptId) {
+exports.updateMypageDetail = async function (userId, password) {
     try {
-        const insertConceptParams = [userId, conceptId];
-
         const connection = await pool.getConnection(async (conn) => conn);
-        const ConceptResult = await conceptDao.insertConcept(connection, insertConceptParams);
-        connection.release();
-        return response(baseResponse.SUCCESS);
+        try{
+            const PasswordResult = await mypageProvider.selectMypageDetailPassword(userId);
+            
+            const hashedPassword = await crypto
+            .createHash("sha512")
+            .update(password)
+            .digest("hex");
+
+            if (PasswordResult.length <= 0) 
+                return  errResponse(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT);
+
+            const updateMypageDetailParams = [hashedPassword, userId];
+            await connection.beginTransaction();
+            
+            const MypageDetailResult = await mypageDao.updateMypageDetail(connection, updateMypageDetailParams);
+            
+            await connection.commit();
+            connection.release();
+
+            return MypageDetailResult;
+        }
+        catch(err){
+            await connection.rollback();
+            connection.release();
+            logger.error(`App - password Service error\n: ${err.message}`);
+            return errResponse(baseResponse.DB_ERROR);
+        }
     } catch (err) {
         logger.error(`App - createConcept Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);

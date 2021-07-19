@@ -53,6 +53,7 @@ module.exports = {
     SIGNUP_PASSWORD_CONFIRM : { "isSuccess": false, "code": 3007, "message": "비밀번호가 일치하지 않습니다." },
     SIGNIN_ALREADY_LOGIN : { "isSuccess": false, "code": 3008, "message": "이미 로그인된 유저입니다." },
     LOGOUT_ALREADY_LOGOUT : { "isSuccess": false, "code": 3009, "message": "이미 로그아웃된 토큰입니다." },
+    SIGNUP_USER_PASSWORD_CONFIRM : { "isSuccess": false, "code": 3010, "message": "비밀번호 수정에 실패하였습니다." },
 
     // 컨셉 error
     CONCEPT_KEYWORD_NOT_EXIST : { "isSuccess": false, "code": 3020, "message": "키워드가 없습니다. 정확히 입력해주세요." },

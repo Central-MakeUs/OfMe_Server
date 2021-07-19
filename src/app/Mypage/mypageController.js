@@ -35,9 +35,10 @@ exports.getMypageDetail = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const selectMypageRows = await conceptProvider.selectMypage(userId);
+    const selectMypageDetailRows = await mypageProvider.selectMypageDetail(userId);
+    if (selectMypageDetailRows.length <= 0) return baseResponse.LOGIN_WITHDRAWAL_ACCOUNT;
 
-    return res.send(response(baseResponse.SUCCESS, selectMypageRows));
+    return res.send(response(baseResponse.SUCCESS, selectMypageDetailRows));
 };
 
 /**
@@ -67,7 +68,24 @@ exports.patchPassWord = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const selectMypageRows = await conceptProvider.selectMypage(userId);
+    const { password, checkPassword } = req.body;
 
-    return res.send(response(baseResponse.SUCCESS, selectMypageRows));
+    if(!password)
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
+    
+    if(password.length < 8 || password.length > 20)
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_LENGTH));
+    
+    if(!checkPassword)
+        return res.send(response(baseResponse.SIGNUP_CHECKPASSWORD_EMPTY));
+    
+    if (!(password === checkPassword))
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_CONFIRM));
+
+    const updateMypageDetailRows = await mypageService.updateMypageDetail(userId, password, checkPassword);
+
+    if (updateMypageDetailRows.affectedRows === 0)
+        return res.send(response(baseResponse.SIGNUP_USER_PASSWORD_CONFIRM));
+
+    return res.send(response(baseResponse.SUCCESS));
 };
