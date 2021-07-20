@@ -13,11 +13,11 @@ module.exports = function(app){
     app.get('/questions/:questionId/answers', jwtMiddleware, qna.getAnswers);
 
     // 4. 답변 등록 API
-    app.get('/questions/:questionId/answers', jwtMiddleware, qna.postAnswers);
+    app.post('/questions/answers', jwtMiddleware, qna.postAnswers);
 
     // 5. 답변 수정 API
-    app.post('/questions/:questionId/answers', jwtMiddleware, qna.patchAnswers);
+    app.patch('/questions/answers', jwtMiddleware, qna.patchAnswers);
 
     // 6. 답변 삭제 API
-    app.get('/questions/:questionId/answers', jwtMiddleware, qna.deleteAnswers);
+    app.delete('/questions/answers', jwtMiddleware, qna.deleteAnswers);
 };

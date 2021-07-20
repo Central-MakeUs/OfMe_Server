@@ -97,11 +97,23 @@ exports.postAnswers = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const conceptId = req.params.conceptId;
-    const getConceptRows = await qnaProvider.getConcept(conceptId);
+    const {questionId, answer, share} = req.body;
 
-    if (getConceptRows.length > 0) return res.send(response(baseResponse.SUCCESS, getConceptRows));
-    else return res.send(response(baseResponse.CONCEPT_NOT_EXIST));
+    if (share !== 'Y' && share !== 'N') return res.send(response(baseResponse.QNA_SHARE_NOT_EXIST));
+    if (share.length < 1) return res.send(response(baseResponse.QNA_SHARE_NOT_EXIST));
+    if (questionId.length < 1) return res.send(response(baseResponse.QNA_QUESTIONID_NOT_EXIST));
+    if (answer.length < 1) return res.send(response(baseResponse.QNA_ANSEWER_NOT_EXIST));
+    if (answer.length > 290) return res.send(response(baseResponse.QNA_ANSEWER_LENGTH_NOT_EXIST));
+
+    const getQuestionIsRows = await qnaProvider.selectQuestionIs(questionId);
+    if (getQuestionIsRows < 1) return res.send(response(baseResponse.QNA_QUESTION_IS_NOT_EXIST));
+
+    const getAnswersIsRows = await qnaProvider.selectAnswersIs(questionId, userId);
+    if (getAnswersIsRows.length > 0) return res.send(response(baseResponse.QNA_ANSEWER_EXIST));
+
+    const postAnswersRows = await qnaService.createAnswers(questionId, userId, answer, share);
+
+    return res.send(postAnswersRows);
 };
 
 /**
@@ -115,18 +127,23 @@ exports.patchAnswers = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const conceptId = req.body.conceptId;
+    const {questionId, answer, share} = req.body;
 
-    const getConceptRows = await qnaProvider.getConcept(conceptId);
-    if (getConceptRows.length > 0) {
-        const selectConceptIngRows = await qnaProvider.selectConceptIng(conceptId);
+    if (share !== 'Y' && share !== 'N') return res.send(response(baseResponse.QNA_SHARE_NOT_EXIST));
+    if (share.length < 1) return res.send(response(baseResponse.QNA_SHARE_NOT_EXIST));
+    if (questionId.length < 1) return res.send(response(baseResponse.QNA_QUESTIONID_NOT_EXIST));
+    if (answer.length < 1) return res.send(response(baseResponse.QNA_ANSEWER_NOT_EXIST));
+    if (answer.length > 290) return res.send(response(baseResponse.QNA_ANSEWER_LENGTH_NOT_EXIST));
 
-        if (selectConceptIngRows.length > 0)
-            return res.send(response(baseResponse.CONCEPT_POST_EXIST));
-        const createConceptRows = await conceptService.createConcept(userId, conceptId);
-        return res.send(response(baseResponse.SUCCESS));
-    } else
-        return res.send(response(baseResponse.CONCEPT_POST_NOT_EXIST));
+    const getQuestionIsRows = await qnaProvider.selectQuestionIs(questionId);
+    if (getQuestionIsRows < 1) return res.send(response(baseResponse.QNA_QUESTION_IS_NOT_EXIST));
+
+    const getAnswersIsRows = await qnaProvider.selectAnswersIs(questionId, userId);
+    if (getAnswersIsRows.length < 1) return res.send(response(baseResponse.QNA_ANSEWER_IS_NOT_EXIST));
+
+    const updateAnswersRows = await qnaService.updateAnswers(getAnswersIsRows[0].id, userId, answer, share, questionId);
+
+    return res.send(updateAnswersRows);
 };
 
 /**
@@ -135,9 +152,20 @@ exports.patchAnswers = async function (req, res) {
  * [DELETE] /questions/:questionId/answers
  */
 exports.deleteAnswers = async function (req, res) {
-    const getConceptIdRows = await conceptProvider.getConceptId();
-    if (getConceptIdRows.length > 0) {
-        return res.send(response(baseResponse.SUCCESS, getConceptIdRows));
-    } else
-        return res.send(response(baseResponse.DB_ERROR));
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const {questionId} = req.body;
+
+    const getQuestionIsRows = await qnaProvider.selectQuestionIs(questionId);
+    if (getQuestionIsRows < 1) return res.send(response(baseResponse.QNA_QUESTION_IS_NOT_EXIST));
+
+    const getAnswersIsRows = await qnaProvider.selectAnswersIs(questionId, userId);
+    if (getAnswersIsRows.length < 1) return res.send(response(baseResponse.QNA_ANSEWER_IS_NOT_EXIST));
+
+    const deleteAnswersRows = await qnaService.deleteAnswers(getAnswersIsRows[0].id);
+
+    return res.send(deleteAnswersRows);
 };

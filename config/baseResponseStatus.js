@@ -83,7 +83,12 @@ module.exports = {
     QNA_ANSWERS_NOT_EXIST : { "isSuccess": false, "code": 3131, "message": "모든 질문: 0 , 공유완료 : 1, 답변완료:2, 미답변 : 3 에 맞게 입력해주세요." },
     QNA_NOT_EXIST : { "isSuccess": false, "code": 3132, "message": "상세 질문 리스트 조회 실패하였습니다." },
     QNA_QUESTION_NOT_EXIST : { "isSuccess": false, "code": 3133, "message": "질문에 대한 답을 등록해주세요." },
-        
+    QNA_SHARE_NOT_EXIST : { "isSuccess": false, "code": 3134, "message": "공유 유무를 제대로 입력해주세요. 공유 : Y, 답변만 : N" },
+    QNA_ANSEWER_NOT_EXIST : { "isSuccess": false, "code": 3135, "message": "답을 입력해주세요." },
+    QNA_ANSEWER_LENGTH_NOT_EXIST : { "isSuccess": false, "code": 3136, "message": "질문에 대한 답은 290자이내로 적어주세요." },
+    QNA_ANSEWER_EXIST : { "isSuccess": false, "code": 3137, "message": "이미 작성된 답변이 있습니다. 그 답변을 수정해주세요." },
+    QNA_QUESTION_IS_NOT_EXIST : { "isSuccess": false, "code": 3138, "message": "해당 질문이 존재하지 않습니다." },
+    QNA_ANSEWER_IS_NOT_EXIST : { "isSuccess": false, "code": 3139, "message": "해당 질문에 대한 답변이 존재하지 않아 수정이 불가합니다. 답변을 작성해주세요." },
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
