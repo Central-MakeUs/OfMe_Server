@@ -67,7 +67,6 @@ module.exports = {
     MAIN_CONCEPT_NOT_EXIST : { "isSuccess": false, "code": 3032, "message": "별점을 등록할 컨셉인덱스를 정해주세요." },
     MAIN_STAR_NOT_EXIST : { "isSuccess": false, "code": 3033, "message": "등록할 별점을 입력해주세요." },
     MAIN_INT_STAR_NOT_EXIST : { "isSuccess": false, "code": 3034, "message": "별점은 정수 1~5로 입력해주세요." },
-    
 
     // 다이어리 error
     DIARY_NOT_EXIST : { "isSuccess": false, "code": 3110, "message": "작성된 다이어리가 없습니다." },
@@ -78,6 +77,12 @@ module.exports = {
     DIARY_CHARACTER_NOT_EXIST : { "isSuccess": false, "code": 3115, "message": "캐릭터를 설정해주세요. 캐릭터를 설정하지 않으면 캐릭터인덱스 0을 주십시오." },
     DIARY_USER_NOT_EXIST : { "isSuccess": false, "code": 3116, "message": "권한이 없습니다." },
     DIARY_ID_NOT_EXIST : { "isSuccess": false, "code": 3117, "message": "삭제할 다이어리를 입력해주세요." },
+
+    // QnA error
+    QNA_SORT_NOT_EXIST : { "isSuccess": false, "code": 3130, "message": "조회할 카테고리를 정확하게 입력해주세요, O: 오늘의 오브미  D: 일상이야기  T: 나의생각" },
+    QNA_ANSWERS_NOT_EXIST : { "isSuccess": false, "code": 3131, "message": "모든 질문: 0 , 공유완료 : 1, 답변완료:2, 미답변 : 3 에 맞게 입력해주세요." },
+    QNA_NOT_EXIST : { "isSuccess": false, "code": 3132, "message": "상세 질문 리스트 조회 실패하였습니다." },
+        
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

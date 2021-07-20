@@ -1,7 +1,7 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
 const userProvider = require("../User/userProvider");
-const conceptProvider = require("../Concept/conceptProvider");
-const conceptService = require("../Concept/conceptService");
+const qnaProvider = require("../QnA/qnaProvider");
+const qnaService = require("../QnA/qnaService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
@@ -10,44 +10,68 @@ const {emit} = require("nodemon");
 
 /**
  * API No. 1
- * API Name : 1단계 테스트 문제 조회 API
- * [GET] /concepts/stageOne
+ * API Name : 질문 리스트 조회 API
+ * [GET] /questions
  */
-exports.getConceptStageOne = async function (req, res) {
+exports.getQuestions = async function (req, res) {
     const userId = req.verifiedToken.userId;
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const stageOneRows = await conceptProvider.selectConceptStageOne();
+    const questionsRows = await qnaProvider.selectQuestions(userId);
 
-    return res.send(response(baseResponse.SUCCESS, stageOneRows));
+    return res.send(response(baseResponse.SUCCESS, questionsRows));
 };
 
 /**
  * API No. 2
- * API Name : 2단계 테스트 문제 조회 API
- * [GET] /concepts/stageTwo/:keywordId
+ * API Name : 질문 상세 조회 API
+ * [GET] /questions/list?sort=&answers=
  */
-exports.getConceptStageTwo = async function (req, res) {
+exports.getQuestionsList = async function (req, res) {
     const userId = req.verifiedToken.userId;
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const keywordId = req.params.keywordId;
-    const stageTwoRows = await conceptProvider.selectConceptStageTwo(keywordId);
+    const {sort, answers} = req.query;
+    
+    if (sort !== 'O' && sort !== 'D' && sort !== 'T')
+        return res.send(response(baseResponse.QNA_SORT_NOT_EXIST));
 
-    if (stageTwoRows.length < 1) return res.send(response(baseResponse.CONCEPT_KEYWORD_NOT_EXIST));
-    else return res.send(response(baseResponse.SUCCESS, stageTwoRows));
+    if ((0 > answers || answers >= 4))
+        return res.send(response(baseResponse.QNA_ANSWERS_NOT_EXIST));
+
+    if (answers === '0') {
+        const questionsListRows = await qnaProvider.selectQuestionsList(sort, userId);
+        return res.send(response(baseResponse.SUCCESS, questionsListRows));
+    }
+    else if (answers === '1') {
+            const share = 'Y'
+            const questionsListRows = await qnaProvider.selectListShare(sort, userId, share);
+            return res.send(response(baseResponse.SUCCESS, questionsListRows));
+        }
+    else if (answers === '2') {
+            const share = 'N'
+            const questionsListRows = await qnaProvider.selectListShare(sort, userId, share);
+            return res.send(response(baseResponse.SUCCESS, questionsListRows));
+    }
+    else if (answers === '3') {
+        const questionsListRows = await qnaProvider.selectListNoAnswer(sort, userId);
+        return res.send(response(baseResponse.SUCCESS, questionsListRows));
+    }
+
+
+    return res.send(response(baseResponse.QNA_NOT_EXIST));
 };
 
 /**
  * API No. 3
- * API Name : 3단계 테스트 문제 조회 API
- * [GET] /concepts/stageThree
+ * API Name : 답변 조회 API
+ * [GET] /questions/:questionId/answers
  */
-exports.getConceptStageThree = async function (req, res) {
+exports.getAnswers = async function (req, res) {
     const userId = req.verifiedToken.userId;
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
@@ -60,10 +84,10 @@ exports.getConceptStageThree = async function (req, res) {
 
 /**
  * API No. 4
- * API Name : 컨셉 정보 조회 API
- * [GET] /concepts/:conceptId
+ * API Name : 답변 등록 API
+ * [POST] /questions/:questionId/answers
  */
-exports.getConcept = async function (req, res) {
+exports.postAnswers = async function (req, res) {
     const userId = req.verifiedToken.userId;
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
@@ -78,10 +102,10 @@ exports.getConcept = async function (req, res) {
 
 /**
  * API No. 5
- * API Name : 컨셉 등록 API
- * [POST] /concepts/:conceptId
+ * API Name : 답변 수정 API
+ * [PATCH] /questions/:questionId/answers
  */
-exports.postConcept = async function (req, res) {
+exports.patchAnswers = async function (req, res) {
     const userId = req.verifiedToken.userId;
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
@@ -103,10 +127,10 @@ exports.postConcept = async function (req, res) {
 
 /**
  * API No. 6
- * API Name : 모든 컨셉 인덱스 조회 API
- * [GET] /concepts/all
+ * API Name : 답변 삭제 API
+ * [DELETE] /questions/:questionId/answers
  */
-exports.getConceptId = async function (req, res) {
+exports.deleteAnswers = async function (req, res) {
     const getConceptIdRows = await conceptProvider.getConceptId();
     if (getConceptIdRows.length > 0) {
         return res.send(response(baseResponse.SUCCESS, getConceptIdRows));

@@ -1,49 +1,42 @@
 const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
 
-const conceptDao = require("./qnaDao");
+const qnaDao = require("./qnaDao");
 
 // Provider: Read 비즈니스 로직 처리
 
-exports.selectConceptStageOne = async function () {
+exports.selectQuestions = async function (userId) {
+  const selectParams = [userId, userId];
   const connection = await pool.getConnection(async (conn) => conn);
-  const conceptStageOsneResult = await conceptDao.selectConceptStageOne(connection);
+  const selectQuestionsResult = await qnaDao.selectQuestions(connection, selectParams);
   connection.release();
 
-  return conceptStageOsneResult;
+  return selectQuestionsResult;
 };
-exports.selectConceptStageTwo = async function (keywordId) {
+
+exports.selectQuestionsList = async function (sort, userId) {
+  const selectParams = [userId, sort];
   const connection = await pool.getConnection(async (conn) => conn);
-  const conceptStageTwoResult = await conceptDao.selectConceptStageTwo(connection, keywordId);
+  const selectQuestionsResult = await qnaDao.selectQuestionsList(connection, selectParams);
   connection.release();
 
-  return conceptStageTwoResult;
+  return selectQuestionsResult;
 };
-exports.selectConceptStageThree = async function () {
+
+exports.selectListShare = async function (sort, userId, share) {
+  const selectParams = [userId, sort, share];
   const connection = await pool.getConnection(async (conn) => conn);
-  const conceptStageThreeResult = await conceptDao.selectConceptStageThree(connection);
+  const selectQuestionsResult = await qnaDao.selectListShare(connection, selectParams);
   connection.release();
 
-  return conceptStageThreeResult;
+  return selectQuestionsResult;
 };
-exports.getConcept = async function (conceptId) {
+
+exports.selectListNoAnswer = async function (sort, userId) {
+  const selectParams = [userId, sort];
   const connection = await pool.getConnection(async (conn) => conn);
-  const conceptResult = await conceptDao.selectConcept(connection, conceptId);
+  const selectQuestionsResult = await qnaDao.selectListNoAnswer(connection, selectParams);
   connection.release();
 
-  return conceptResult;
-};
-exports.selectConceptIng = async function (userId) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const conceptResult = await conceptDao.selectConceptIng(connection, userId);
-  connection.release();
-
-  return conceptResult;
-};
-exports.getConceptId = async function () {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const getConceptIdResult = await conceptDao.selectConceptId(connection);
-  connection.release();
-
-  return getConceptIdResult;
+  return selectQuestionsResult;
 };

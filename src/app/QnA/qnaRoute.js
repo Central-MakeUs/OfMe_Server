@@ -1,23 +1,23 @@
 module.exports = function(app){
-    const concept = require('./qnaController');
+    const qna = require('./qnaController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
 
 
-    // 6. 모든 컨셉 인덱스 조회 API
-    app.get('/concepts/all', concept.getConceptId);
+    // 1. 질문 리스트 조회 API
+    app.get('/questions', jwtMiddleware, qna.getQuestions);
     
-    // 1. 1단계 테스트 문제 조회 API
-    app.get('/concepts/stageOne', jwtMiddleware, concept.getConceptStageOne);
-    
-    // 2. 2단계 테스트 문제 조회 API
-    app.get('/concepts/stageTwo/:keywordId', jwtMiddleware, concept.getConceptStageTwo);
+    // 2. 질문 상세 조회 API
+    app.get('/questions/list', jwtMiddleware, qna.getQuestionsList);
 
-    // 3. 3단계 테스트 문제 조회 API
-    app.get('/concepts/stageThree', jwtMiddleware, concept.getConceptStageThree);
+    // 3. 답변 조회 API
+    app.get('/questions/:questionId/answers', jwtMiddleware, qna.getAnswers);
 
-    // 4. 컨셉 정보 조회 API
-    app.get('/concepts/:conceptId', jwtMiddleware, concept.getConcept);
+    // 4. 답변 등록 API
+    app.get('/questions/:questionId/answers', jwtMiddleware, qna.postAnswers);
 
-    // 5. 컨셉 등록 API
-    app.post('/concepts', jwtMiddleware, concept.postConcept);
+    // 5. 답변 수정 API
+    app.post('/questions/:questionId/answers', jwtMiddleware, qna.patchAnswers);
+
+    // 6. 답변 삭제 API
+    app.get('/questions/:questionId/answers', jwtMiddleware, qna.deleteAnswers);
 };
