@@ -76,10 +76,14 @@ exports.getAnswers = async function (req, res) {
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+    
+    const questionId = req.params.questionId;
+    const selectAnswersRows = await qnaProvider.selectAnswers(userId, questionId);
 
-    const stageThreeRows = await conceptProvider.selectConceptStageThree();
-
-    return res.send(response(baseResponse.SUCCESS, stageThreeRows));
+    if (selectAnswersRows.length > 0)
+        return res.send(response(baseResponse.SUCCESS, selectAnswersRows));
+    else
+        return res.send(response(baseResponse.QNA_QUESTION_NOT_EXIST));
 };
 
 /**
@@ -94,7 +98,7 @@ exports.postAnswers = async function (req, res) {
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
     const conceptId = req.params.conceptId;
-    const getConceptRows = await conceptProvider.getConcept(conceptId);
+    const getConceptRows = await qnaProvider.getConcept(conceptId);
 
     if (getConceptRows.length > 0) return res.send(response(baseResponse.SUCCESS, getConceptRows));
     else return res.send(response(baseResponse.CONCEPT_NOT_EXIST));
@@ -113,9 +117,9 @@ exports.patchAnswers = async function (req, res) {
 
     const conceptId = req.body.conceptId;
 
-    const getConceptRows = await conceptProvider.getConcept(conceptId);
+    const getConceptRows = await qnaProvider.getConcept(conceptId);
     if (getConceptRows.length > 0) {
-        const selectConceptIngRows = await conceptProvider.selectConceptIng(conceptId);
+        const selectConceptIngRows = await qnaProvider.selectConceptIng(conceptId);
 
         if (selectConceptIngRows.length > 0)
             return res.send(response(baseResponse.CONCEPT_POST_EXIST));

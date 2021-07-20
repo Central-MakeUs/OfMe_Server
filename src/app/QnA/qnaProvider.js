@@ -40,3 +40,12 @@ exports.selectListNoAnswer = async function (sort, userId) {
 
   return selectQuestionsResult;
 };
+
+exports.selectAnswers = async function (userId, questionId) {
+  const selectParams = [userId, questionId];
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectAnswersResult = await qnaDao.selectAnswers(connection, selectParams);
+  connection.release();
+
+  return selectAnswersResult;
+};

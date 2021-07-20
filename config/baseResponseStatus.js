@@ -82,6 +82,7 @@ module.exports = {
     QNA_SORT_NOT_EXIST : { "isSuccess": false, "code": 3130, "message": "조회할 카테고리를 정확하게 입력해주세요, O: 오늘의 오브미  D: 일상이야기  T: 나의생각" },
     QNA_ANSWERS_NOT_EXIST : { "isSuccess": false, "code": 3131, "message": "모든 질문: 0 , 공유완료 : 1, 답변완료:2, 미답변 : 3 에 맞게 입력해주세요." },
     QNA_NOT_EXIST : { "isSuccess": false, "code": 3132, "message": "상세 질문 리스트 조회 실패하였습니다." },
+    QNA_QUESTION_NOT_EXIST : { "isSuccess": false, "code": 3133, "message": "질문에 대한 답을 등록해주세요." },
         
 
     //Connection, Transaction 등의 서버 오류

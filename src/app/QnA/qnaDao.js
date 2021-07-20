@@ -68,9 +68,21 @@ WHERE QnAQuestion.sort = ? and share IS NULL;
   const [selectQuestionsRows] = await connection.query(selectQuestionsQuery, selectParams);
   return selectQuestionsRows;
 }
+// 질문 리스트 조회
+async function selectAnswers(connection, selectParams) {
+  const selectQuestionsQuery = `
+SELECT question, answer, share, date_format(QnAQuestion.createAt, '%Y-%m-%d') as createAt
+FROM QnAQuestion
+INNER JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
+WHERE QnAAnswer.userId = ? and QnAAnswer.status = 'Activated' and QnAQuestion.id = ?;
+                `;
+  const [selectQuestionsRows] = await connection.query(selectQuestionsQuery, selectParams);
+  return selectQuestionsRows;
+}
 module.exports = {
   selectQuestions,
   selectQuestionsList,
   selectListShare,
   selectListNoAnswer,
+  selectAnswers,
 };
