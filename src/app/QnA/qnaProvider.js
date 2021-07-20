@@ -67,3 +67,66 @@ exports.selectQuestionIs = async function (questionId) {
 
   return selectAnswersIsResult;
 };
+
+exports.selectEverything = async function (userId) {
+  const selectParams = [userId, userId];
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectEverythingResult = await qnaDao.selectEverything(connection, selectParams);
+  connection.release();
+
+  return selectEverythingResult;
+};
+
+exports.selectMyReward = async function (userId) {
+  const selectParams = [userId, userId];
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectMyRewardResult = await qnaDao.selectMyReward(connection, selectParams);
+  connection.release();
+
+  return selectMyRewardResult;
+};
+
+exports.selectShare = async function (userId) {
+  const selectParams = [userId];
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectResult = await qnaDao.selectShare(connection, selectParams);
+  connection.release();
+
+  return selectResult;
+};
+
+exports.selectCheck = async function (userId) {
+  const selectParams = [userId];
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectResult = await qnaDao.selectCheck(connection, selectParams);
+  connection.release();
+
+  return selectResult;
+};
+
+exports.selectNoCheck = async function (userId) {
+  const selectParams = [userId];
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectResult = await qnaDao.selectNoCheck(connection, selectParams);
+  connection.release();
+
+  return selectResult;
+};
+
+exports.selectQuestionPages = async function (questionId) {
+  const selectParams = [questionId];
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectResult = await qnaDao.selectQuestionPages(connection, selectParams);
+  connection.release();
+
+  return selectResult;
+};
+
+exports.selectRockIs = async function (questionId, userId) {
+  const selectParams = [userId, questionId];
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectResult = await qnaDao.selectRockIs(connection, selectParams);
+  connection.release();
+
+  return selectResult;
+};

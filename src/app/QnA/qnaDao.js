@@ -137,6 +137,100 @@ where id = ? and status = 'Activated';
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
   return QuestionsRows;
 }
+
+async function selectEverything(connection, Params) {
+  const QuestionsQuery = `
+SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
+FROM (
+   SELECT *
+   FROM QnAAround
+    WHERE userId = ?
+) AS QnAAround
+RIGHT JOIN QnAQuestion on QnAQuestion.id = QnAAround.questionId
+WHERE QnAQuestion.status = 'Activated' and QnAAround.id IS NULL
+UNION ALL
+SELECT QnAQuestion.id, question, QnAAround.id
+FROM QnAAround
+INNER JOIN QnAQuestion ON QnAQuestion.id = QnAAround.questionId
+WHERE QnAAround.userId = ?;
+                `;
+  const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
+  return QuestionsRows;
+}
+
+async function selectMyReward(connection, Params) {
+  const QuestionsQuery = `
+SELECT (SELECT count(*) FROM QnAAround WHERE userId = ?) as countQnA, IFNULL(SUM(point), 0) as sumPoint
+FROM Reward
+WHERE Reward.userId = ? and status = 'Activated';
+                `;
+  const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
+  return QuestionsRows;
+}
+
+async function selectShare(connection, Params) {
+  const QuestionsQuery = `
+SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
+FROM QnAQuestion
+INNER JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
+LEFT JOIN QnAAround ON QnAQuestion.id = QnAAround.questionId
+WHERE QnAAnswer.userId = ? and QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y'
+order by QnAAround.id ASC;
+                `;
+  const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
+  return QuestionsRows;
+}
+
+async function selectCheck(connection, Params) {
+  const QuestionsQuery = `
+SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
+FROM QnAQuestion
+INNER JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
+INNER JOIN QnAAround ON QnAQuestion.id = QnAAround.questionId
+WHERE QnAAnswer.userId = ? and QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y'
+order by QnAAround.id ASC;
+                `;
+  const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
+  return QuestionsRows;
+}
+
+async function selectNoCheck(connection, Params) {
+  const QuestionsQuery = `
+SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
+FROM (
+   SELECT *
+   FROM QnAAround
+    WHERE userId = ?
+) AS QnAAround
+RIGHT JOIN QnAQuestion on QnAQuestion.id = QnAAround.questionId
+WHERE QnAQuestion.status = 'Activated' and QnAAround.id IS NULL
+ORDER BY RAND();
+                `;
+  const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
+  return QuestionsRows;
+}
+
+async function selectQuestionPages(connection, Params) {
+  const QuestionsQuery = `
+SELECT question, User.imgUrl, User.nickname, User.id as userId, answer, date_format(QnAAnswer.createAt, '%Y-%m-%d') as createAt
+FROM QnAQuestion
+RIGHT JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
+INNER JOIN User ON User.id = QnAAnswer.userId
+WHERE QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y' and QnAAnswer.questionId = ?
+ORDER BY QnAAnswer.createAt DESC;
+                `;
+  const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
+  return QuestionsRows;
+}
+async function selectRockIs(connection, Params) {
+  const QuestionsQuery = `
+SELECT *
+FROM QnAAround
+WHERE userId = ? and questionId = ?;
+                `;
+  const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
+  return QuestionsRows;
+}
 module.exports = {
   selectQuestions,
   selectQuestionsList,
@@ -149,4 +243,11 @@ module.exports = {
   selectQuestionIs,
   updateAnswers,
   deleteAnswers,
+  selectMyReward,
+  selectEverything,
+  selectShare,
+  selectCheck,
+  selectNoCheck,
+  selectQuestionPages,
+  selectRockIs,
 };

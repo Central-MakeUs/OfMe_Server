@@ -94,3 +94,36 @@ exports.deleteAnswers = async function (answerId) {
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+
+exports.updateReward = async function (questionId, userId) {
+    try {
+        const createRewardParams = [userId, -3, 'QnA 잠금해제'];
+
+        const connection = await pool.getConnection(async(conn) => conn);
+        try {
+
+        await connection.beginTransaction();
+        
+        const MyRewardResult = await qnaProvider.selectMyReward(userId);
+
+        if ((MyRewardResult[0].sumPoint - 3) >= 0) {
+            await qnaDao.createReward(connection, createRewardParams);
+        }
+        else return response(baseResponse.QNA_REWARD_NOT_EXIST);
+
+        await connection.commit();
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+
+        } catch (err) {
+            await connection.rollback();
+            connection.release();
+            logger.error(`App - logout Service error\n: ${err.message}`);
+            return errResponse(baseResponse.DB_ERROR);
+        }
+    } catch (err) {
+        logger.error(`App - createConcept Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};

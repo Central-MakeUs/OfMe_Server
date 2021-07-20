@@ -169,3 +169,106 @@ exports.deleteAnswers = async function (req, res) {
 
     return res.send(deleteAnswersRows);
 };
+
+/**
+ * API No. 7
+ * API Name : 모든 질문 둘러보기 API
+ * [GET] /questions/views/everything
+ */
+exports.getEverything = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const getEverythingRows = await qnaProvider.selectEverything(userId);
+
+    return res.send(response(baseResponse.SUCCESS, getEverythingRows));
+};
+
+/**
+ * API No. 8
+ * API Name : 내가 공유한 QnA 둘러보기 API
+ * [GET] /questions/views/share
+ */
+exports.getShare = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const getShareRows = await qnaProvider.selectShare(userId);
+
+    return res.send(response(baseResponse.SUCCESS, getShareRows));
+};
+
+/**
+ * API No. 9
+ * API Name : 확인완료 둘러보기 API
+ * [GET] /questions/views/check
+ */
+exports.getCheck = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const getCheckRows = await qnaProvider.selectCheck(userId);
+
+    return res.send(response(baseResponse.SUCCESS, getCheckRows));
+};
+
+/**
+ * API No. 10
+ * API Name : 미확인 둘러보기 API
+ * [GET] /questions/views/nocheck
+ */
+exports.getNoCheck = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const getNoCheckRows = await qnaProvider.selectNoCheck(userId);
+
+    return res.send(response(baseResponse.SUCCESS, getNoCheckRows));
+};
+
+/**
+ * API No. 11
+ * API Name : 확인한 QnA와 내 리워드 조회 API
+ * [GET] /questions/myrewards
+ */
+exports.getMyReward = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const getMyRewardRows = await qnaProvider.selectMyReward(userId);
+    return res.send(response(baseResponse.SUCCESS, getMyRewardRows));
+};
+
+/**
+ * API No. 12
+ * API Name : 답변 둘러보기 API
+ * [GET] /questions/:questionId/pages
+ */
+exports.getQuestionPages = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const questionId = req.params.questionId;
+    // 이미 잠금해제한 것인지 확인
+    const getRockIsRows = await qnaProvider.selectRockIs(questionId, userId);
+    if (getRockIsRows.length < 1) {
+        const updateRewardRows = await qnaService.updateReward(questionId, userId);
+        if (updateRewardRows.isSuccess === false) return res.send(updateRewardRows);
+    }
+    // 조회
+    const getQuestionPageRows = await qnaProvider.selectQuestionPages(questionId);
+    if (getQuestionPageRows.length < 1) return res.send(response(baseResponse.QNA_AROUND_ANSEWER_NOT_EXIST));
+    return res.send(response(baseResponse.SUCCESS, getQuestionPageRows));
+};

@@ -20,4 +20,22 @@ module.exports = function(app){
 
     // 6. 답변 삭제 API
     app.delete('/questions/answers', jwtMiddleware, qna.deleteAnswers);
+
+    // 7. 모든 질문 둘러보기 API
+    app.get('/questions/views/everything', jwtMiddleware, qna.getEverything);
+
+    // 8. 내가 공유한 QnA 둘러보기 API
+    app.get('/questions/views/share', jwtMiddleware, qna.getShare);
+
+    // 9. 확인완료 둘러보기 API
+    app.get('/questions/views/check', jwtMiddleware, qna.getCheck);
+
+    // 10. 미확인 둘러보기 API
+    app.get('/questions/views/nocheck', jwtMiddleware, qna.getNoCheck);
+
+    // 11. 확인한 QnA와 내 리워드 조회 API
+    app.get('/questions/myrewards', jwtMiddleware, qna.getMyReward);
+
+    // 12. 답변 둘러보기 API
+    app.get('/questions/:questionId/pages', jwtMiddleware, qna.getQuestionPages);
 };
