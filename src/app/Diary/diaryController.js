@@ -120,3 +120,26 @@ exports.deleteDiarys = async function (req, res) {
 
     if (deleteDiaryRows) return res.send(response(baseResponse.SUCCESS));
 };
+
+/**
+ * API No. 5
+ * API Name : 날짜에 대한 컨셉 조회 API
+ * [GET] /date?years=&months=&days=
+ */
+exports.getDateDiarys = async function (req, res) {
+    /**
+     * queryString: years, months, days
+     */
+    const userId = req.verifiedToken.userId;
+    const {years, months, days} = req.query;
+    const createAt = years+'-'+months+'-'+days;
+
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const selectDiaryRows = await diaryProvider.selectDateDiary(userId, createAt);
+
+    if(selectDiaryRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
+    else return res.send(response(baseResponse.SUCCESS, selectDiaryRows));
+};

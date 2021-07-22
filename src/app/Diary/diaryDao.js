@@ -103,6 +103,17 @@ async function deleteDiaryImg(connection, dayDiaryId) {
   return selectDiaryRows;
 }
 
+// 연도,월,일로 다이어리 조회
+async function selectDateDiary(connection, userId, createAt) {
+  const selectQuery = `
+SELECT UserConcept.id, conceptId, ConceptData.name
+FROM UserConcept
+INNER JOIN ConceptData ON UserConcept.conceptId = ConceptData.id
+WHERE userId = ? and date(UserConcept.createAt) = ?;
+                `;
+  const [selectDiaryRows] = await connection.query(selectQuery, [userId, createAt]);
+  return selectDiaryRows;
+}
 module.exports = {
   selectDiary,
   insertDiaryInfo,
@@ -112,5 +123,6 @@ module.exports = {
   updateDiaryImg,
   selectDiaryImg,
   deleteDiary,
-  deleteDiaryImg
+  deleteDiaryImg,
+  selectDateDiary
 };

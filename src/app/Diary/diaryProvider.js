@@ -41,3 +41,17 @@ exports.selectDiaryImg = async function (diaryId) {
 
   return selectDiaryImgRows;
 };
+
+/**
+ * API No. 5
+ * API Name : 데일리 다이어리 조회 API
+ * [GET] /date?year=&months=&days=
+ */
+exports.selectDateDiary = async function (userId, createAt) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectDateDiaryRows = await diaryDao.selectDateDiary(connection, userId, createAt);
+
+  connection.release();
+
+  return selectDateDiaryRows;
+};
