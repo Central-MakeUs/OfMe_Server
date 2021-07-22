@@ -231,6 +231,14 @@ WHERE userId = ? and questionId = ?;
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
   return QuestionsRows;
 }
+async function insertDeclarations(connection, Params) {
+  const QuestionsQuery = `
+insert into Declaration(answerId, userId)
+values (?, ?);
+                `;
+  const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
+  return QuestionsRows;
+}
 module.exports = {
   selectQuestions,
   selectQuestionsList,
@@ -250,4 +258,5 @@ module.exports = {
   selectNoCheck,
   selectQuestionPages,
   selectRockIs,
+  insertDeclarations,
 };

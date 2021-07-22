@@ -272,3 +272,22 @@ exports.getQuestionPages = async function (req, res) {
     if (getQuestionPageRows.length < 1) return res.send(response(baseResponse.QNA_AROUND_ANSEWER_NOT_EXIST));
     return res.send(response(baseResponse.SUCCESS, getQuestionPageRows));
 };
+
+/**
+ * API No. 13
+ * API Name : 둘러보기 답변 신고하기 API
+ * [POST] /declarations
+ */
+exports.postDeclarations = async function (req, res) {
+    const userId = req.verifiedToken.userId;
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    const { answerId } = req.body;
+
+    // 이미 잠금해제한 것인지 확인
+    const postDeclarationRows = await qnaService.insertDeclarations(answerId, userId);
+
+    return res.send(response(baseResponse.SUCCESS));
+};

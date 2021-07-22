@@ -127,3 +127,21 @@ exports.updateReward = async function (questionId, userId) {
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+
+
+exports.insertDeclarations = async function (answerId, userId) {
+    try {
+        const Params = [answerId, userId];
+
+        const connection = await pool.getConnection(async(conn) => conn);
+
+        const insertDeclarationsResult = await qnaDao.insertDeclarations(connection, Params);
+
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - createConcept Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
