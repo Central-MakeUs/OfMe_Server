@@ -13,7 +13,7 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.updateMypageDetail = async function (userId, password) {
+exports.updateMypageDetail = async function (userId, password, newPassword) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
         try{
@@ -21,11 +21,20 @@ exports.updateMypageDetail = async function (userId, password) {
             
             const hashedPassword = await crypto
             .createHash("sha512")
+            .update(newPassword)
+            .digest("hex");
+
+            const basepassword = await crypto
+            .createHash("sha512")
             .update(password)
             .digest("hex");
 
             if (PasswordResult.length <= 0) 
                 return  errResponse(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT);
+
+            if (PasswordResult[0].password !== basepassword)
+                return  errResponse(baseResponse.USER_PASSWORD_FAIL);
+            
 
             const updateMypageDetailParams = [hashedPassword, userId];
             await connection.beginTransaction();
@@ -35,7 +44,7 @@ exports.updateMypageDetail = async function (userId, password) {
             await connection.commit();
             connection.release();
 
-            return MypageDetailResult;
+            return response(baseResponse.SUCCESS);
         }
         catch(err){
             await connection.rollback();

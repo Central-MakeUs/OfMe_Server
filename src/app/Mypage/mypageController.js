@@ -68,24 +68,26 @@ exports.patchPassWord = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const { password, checkPassword } = req.body;
+    const { newPassword, checkPassword, password } = req.body;
 
-    if(!password)
+    if(!newPassword)
         return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
     
-    if(password.length < 8 || password.length > 20)
+    if(newPassword.length < 8 || newPassword.length > 20)
         return res.send(response(baseResponse.SIGNUP_PASSWORD_LENGTH));
     
     if(!checkPassword)
         return res.send(response(baseResponse.SIGNUP_CHECKPASSWORD_EMPTY));
     
-    if (!(password === checkPassword))
+    if (!(newPassword === checkPassword))
         return res.send(response(baseResponse.SIGNUP_PASSWORD_CONFIRM));
+    if (!password)
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
 
-    const updateMypageDetailRows = await mypageService.updateMypageDetail(userId, password, checkPassword);
+    const updateMypageDetailRows = await mypageService.updateMypageDetail(userId, password, newPassword);
 
     if (updateMypageDetailRows.affectedRows === 0)
         return res.send(response(baseResponse.SIGNUP_USER_PASSWORD_CONFIRM));
 
-    return res.send(response(baseResponse.SUCCESS));
+    return res.send(updateMypageDetailRows);
 };
