@@ -20,7 +20,7 @@ exports.createConcept = async function (userId, conceptId) {
         const connection = await pool.getConnection(async (conn) => conn);
         const ConceptResult = await conceptDao.insertConcept(connection, insertConceptParams);
         connection.release();
-        return response(baseResponse.SUCCESS);
+        return ConceptResult;
     } catch (err) {
         logger.error(`App - createConcept Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
