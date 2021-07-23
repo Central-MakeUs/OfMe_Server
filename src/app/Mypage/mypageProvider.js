@@ -7,7 +7,8 @@ const mypageDao = require("./mypageDao");
 
 exports.selectMypage = async function (userId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const selectMypageResult = await mypageDao.selectMypage(connection, userId);
+  const user = [userId, userId]
+  const selectMypageResult = await mypageDao.selectMypage(connection, user);
   if (selectMypageResult.length <= 0) {
     connection.release();
     return LOGIN_WITHDRAWAL_ACCOUNT;

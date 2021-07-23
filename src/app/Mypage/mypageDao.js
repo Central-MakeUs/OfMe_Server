@@ -1,16 +1,20 @@
 // 마이페이지 상단 내 정보들
-async function selectMypage(connection, userId) {
+async function selectMypage(connection, user) {
   const ConceptStageQuery = `
-select nickname, ConceptData.name, User.imgUrl,TypeData.highlight, sum(Reward.point) as point
+select UserType.createAt, nickname, concept.name, User.imgUrl, TypeData.highlight,
+       (select sum(point) from Reward where userId = ?) as point
 from User
-inner join UserConcept on User.id = UserConcept.userId
-inner join ConceptData on UserConcept.conceptId = ConceptData.id
-inner join UserType on UserType.userId = User.id
-inner join TypeData on TypeData.id = UserType.typeId
+left join (select ConceptData.name, userId
+    from UserConcept
+    inner join ConceptData on UserConcept.conceptId = ConceptData.id
+    where UserConcept.status = 'Activated') concept on concept.userId = User.id
+left join UserType on UserType.userId = User.id
+left join TypeData on TypeData.id = UserType.typeId
 inner join Reward on Reward.userId = User.id
-where User.id = ? and User.status = 'Activated' and UserConcept.status = 'Activated' and UserType.status = 'Activated' and Reward.status = 'Activated';
+where User.id = ?
+order by UserType.createAt DESC limit 1;
                 `;
-  const [ConceptStageRows] = await connection.query(ConceptStageQuery, userId);
+  const [ConceptStageRows] = await connection.query(ConceptStageQuery, user);
   return ConceptStageRows;
 }
 
