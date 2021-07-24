@@ -1,6 +1,8 @@
 const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
 const userDao = require("./userDao");
+const {response, errResponse} = require("../../../config/response");
+const baseResponse = require("../../../config/baseResponseStatus");
 
 exports.emailCheck = async function(email) {
   const connection = await pool.getConnection(async (conn) => conn);
@@ -57,3 +59,11 @@ exports.getUser = async function (userId) {
 
   return getUsers;
 };
+
+exports.getUserNickname = async function(userId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getUserNickname = await userDao.selectUserNickname(connection, userId);
+  connection.release();
+
+  return response(baseResponse.SUCCESS, getUserNickname);
+}

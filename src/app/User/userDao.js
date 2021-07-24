@@ -132,6 +132,19 @@ async function getUser(connection, userId) {
   return getUserRows;
 }
 
+// 유저 닉네임 조회
+async function selectUserNickname(connection, userId) {
+  const selectUserNicknameQuery = `
+      select id, nickname
+      from User
+      where id = ? and status = 'Activated';
+  `;
+  
+  const [selectUserNicknameRows] = await connection.query(selectUserNicknameQuery, [userId]);
+  return selectUserNicknameRows[0];
+}
+
+
 module.exports = {
   selectUser,
   selectUserEmail,
@@ -145,4 +158,5 @@ module.exports = {
   selectLogoutToken,
   deleteUser,
   getUser,
+  selectUserNickname
 };

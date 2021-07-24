@@ -113,3 +113,12 @@ exports.withdraw = async function(req,res) {
 
     return res.send(deleteUserResponse);
 }
+
+exports.nickname = async function(req,res) {
+
+    const userId = req.verifiedToken.userId;
+
+    const userNickname = await userProvider.getUserNickname(userId);
+
+    return res.send(userNickname);
+}
