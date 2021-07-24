@@ -51,7 +51,6 @@ exports.postDiarys = async function (req, res) {
     if (!title) return res.send(response(baseResponse.DIARY_TITLE_NOT_EXIST));
     else if (!text) return res.send(response(baseResponse.DIARY_TEXT_NOT_EXIST));
     else if (!createAt) return res.send(response(baseResponse.DIARY_CREATEAT_NOT_EXIST));
-    else if (!character) return res.send(response(baseResponse.DIARY_CHARACTER_NOT_EXIST));
     else if (img.length > 4) return res.send(response(baseResponse.DIARY_IMG_NOT_EXIST));
 
     const createDiaryRows = await diaryService.createDiary(userId, title, character, text, img, createAt);
