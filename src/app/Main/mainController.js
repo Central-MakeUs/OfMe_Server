@@ -21,7 +21,7 @@ exports.getCharacters = async function (req, res) {
 
     const selectCharactersRows = await mainProvider.selectCharacters(userId);
 
-    if(selectCharactersRows.length < 1) return res.send(response(baseResponse.MAIN_CHARACTER_NOT_EXIST));
+    if(selectCharactersRows.length < 1) return res.send(response(baseResponse.MAIN_CHARACTER_NOT_EXIST, {result: userId}));
     else return res.send(response(baseResponse.SUCCESS, selectCharactersRows));
 };
 

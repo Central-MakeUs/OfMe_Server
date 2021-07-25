@@ -27,7 +27,7 @@ exports.getDiarys = async function (req, res) {
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
     const selectDiaryRows = await diaryProvider.selectDiary(userId, createAt);
-    console.log(!selectDiaryRows);
+
     if(selectDiaryRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
     else return res.send(response(baseResponse.SUCCESS, selectDiaryRows));
 };
