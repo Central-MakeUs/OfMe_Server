@@ -1,6 +1,7 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
 const userProvider = require("../User/userProvider");
 const mainProvider = require("../Main/mainProvider");
+const mypageProvider = require("../Mypage/mypageProvider");
 const mainService = require("../Main/mainService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
@@ -20,8 +21,9 @@ exports.getCharacters = async function (req, res) {
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
     const selectCharactersRows = await mainProvider.selectCharacters(userId);
-
-    if(selectCharactersRows.length < 1) return res.send(response(baseResponse.MAIN_CHARACTER_NOT_EXIST, {result: userId}));
+    const selectNameRows = await mypageProvider.selectMypageDetail(userId)
+    console.log(selectNameRows)
+    if(selectCharactersRows.length < 1) return res.send(response(baseResponse.MAIN_CHARACTER_NOT_EXIST, {nickname: selectNameRows[0].nickname}));
     else return res.send(response(baseResponse.SUCCESS, selectCharactersRows));
 };
 

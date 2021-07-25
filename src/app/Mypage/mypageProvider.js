@@ -34,3 +34,11 @@ exports.selectMypageDetailPassword = async function (userId) {
 
   return selectMypageDetailPasswordResult;
 };
+exports.updateMypage = async function (userId, nickname, imgUrl) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const params = [nickname, imgUrl, userId]
+  const updateMypageResult = await mypageDao.updateMypage(connection, params);
+  connection.release();
+
+  return updateMypageResult;
+};
