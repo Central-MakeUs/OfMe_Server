@@ -75,6 +75,17 @@ where id = ?;
   const [Rows] = await connection.query(Query, updateMypageDetailParams);
   return Rows;
 }
+
+// 비밀번호 조회
+async function updateMypage(connection, params) {
+  const Query = `
+update User
+set nickname = ?, imgUrl = ?
+where id = ?;
+                `;
+  const [Rows] = await connection.query(Query, params);
+  return Rows;
+}
 module.exports = {
   selectMypage,
   selectMyfriend,
@@ -82,4 +93,5 @@ module.exports = {
   selectMypageDetail,
   selectMypageDetailPassword,
   updateMypageDetail,
+  updateMypage,
 };
