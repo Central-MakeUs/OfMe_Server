@@ -62,7 +62,7 @@ exports.getUser = async function (userId) {
 
 exports.getUserNickname = async function(userId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const getUserNickname = await userDao.selectUserNickname(connection, userId);
+  const getUserNickname = await userDao.selectUserNickname2(connection, userId);
   connection.release();
 
   return response(baseResponse.SUCCESS, getUserNickname);

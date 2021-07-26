@@ -133,7 +133,7 @@ async function getUser(connection, userId) {
 }
 
 // 유저 닉네임 조회
-async function selectUserNickname(connection, userId) {
+async function selectUserNickname2(connection, userId) {
   const selectUserNicknameQuery = `
       select id, nickname
       from User
@@ -158,5 +158,5 @@ module.exports = {
   selectLogoutToken,
   deleteUser,
   getUser,
-  selectUserNickname
+  selectUserNickname2
 };

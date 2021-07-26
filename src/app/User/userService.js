@@ -27,6 +27,7 @@ exports.createUser = async function (email, password, checkPassword, nickname) {
 
             // 닉네임 중복 확인
             const nicknameRows = await userProvider.nicknameCheck(nickname);
+            console.log(nicknameRows)
             if(nicknameRows.length > 0)
                 return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
             
