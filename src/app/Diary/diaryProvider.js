@@ -21,13 +21,13 @@ exports.selectDiary = async function (userId, createAt) {
  * API Name : 데일리 다이어리 수정 API
  * 다이어리 작성자와 수정할 사용자와 같은 사람인지 확인
  */
-exports.selectDiaryId = async function (diaryId) {
+exports.selectDiaryUserId = async function (diaryId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const selectDiaryIdRows = await diaryDao.selectDiaryId(connection, diaryId);
+  const selectDiaryUserIdRows = await diaryDao.selectDiaryUserId(connection, diaryId);
 
   connection.release();
 
-  return selectDiaryIdRows;
+  return selectDiaryUserIdRows;
 };
 /**
  * API Name : 데일리 다이어리 수정 API
