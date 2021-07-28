@@ -12,7 +12,7 @@ const crypto = require("crypto");
 const {connect} = require("http2");
 
 
-exports.createUser = async function (email, password, checkPassword, nickname) {
+exports.createUser = async function (email, password, checkPassword, nickname, imgUrl) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
         try {
@@ -37,7 +37,7 @@ exports.createUser = async function (email, password, checkPassword, nickname) {
                 .update(password)
                 .digest("hex");
 
-            const insertUserInfoParams = [email, hashedPassword, nickname];
+            const insertUserInfoParams = [email, hashedPassword, nickname, imgUrl];
 
             await connection.beginTransaction();
 

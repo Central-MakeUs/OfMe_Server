@@ -55,8 +55,8 @@ async function selectUserJwt(connection, userId) {
 // 회원가입
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-      INSERT INTO User (email, password, nickname, status)
-      VALUES (?, ?, ?, "Activated");
+      INSERT INTO User (email, password, nickname, imgUrl, status)
+      VALUES (?, ?, ?, ?, "Activated");
   `
   const insertUserInfoRows = await connection.query(insertUserInfoQuery, insertUserInfoParams);
   return insertUserInfoRows;

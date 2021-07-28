@@ -23,7 +23,7 @@ where keywordId = ? and status = 'Activated';
 // 컨셉 스테이지 3번 조회
 async function selectConceptStageThree(connection) {
   const ConceptStageQuery = `
-SELECT id, question, answer1, answer2, answer3, answer4
+SELECT id, question, highlight, answer1, answer2, answer3, answer4
 FROM ConceptTest3
 WHERE status = 'Activated'
 ORDER BY rand() LIMIT 1;
@@ -44,16 +44,6 @@ where ConceptData.id = ? and ConceptData.status = 'Activated' limit 1;
   return ConceptRows;
 }
 
-// 컨셉 등록
-async function insertConcept(connection, insertConceptParams) {
-  const ConceptQuery = `
-insert into UserConcept(userId, conceptId)
-values (?, ?);
-                `;
-  const [ConceptRows] = await connection.query(ConceptQuery, insertConceptParams);
-  return ConceptRows;
-}
-
 // 컨셉 이미 진행중인지 확인
 async function selectConceptIng(connection, userId) {
   const ConceptQuery = `
@@ -64,6 +54,7 @@ where userId = ? and (status = 'Activated' OR status = 'Stop')
   const [ConceptRows] = await connection.query(ConceptQuery, userId);
   return ConceptRows;
 }
+
 // 컨셉 인덱스 불러오기
 async function selectConceptId(connection) {
   const ConceptQuery = `
@@ -74,12 +65,37 @@ where status = 'Activated'
   const [ConceptRows] = await connection.query(ConceptQuery);
   return ConceptRows;
 }
+
+// 컨셉 추천 결과 컨셉 인덱스 조회
+async function selectTestResult(connection, stageOneResult, stageTwoResult) {
+  const selectTestResultQuery = `
+  select conceptId, testKeywordId, testAnswerId
+  from ConceptSort
+  where testKeywordId = ? and testAnswerId = ?;
+
+                `;
+  const [selectTestResultRows] = await connection.query(selectTestResultQuery, [stageOneResult, stageTwoResult]);
+  return selectTestResultRows[0];
+}
+
+// 컨셉 등록
+async function postUserConcept(connection, userId, conceptId) {
+  const postUserConceptQuery = `
+                  INSERT INTO UserConcept (userId, conceptId)
+                  VALUES (?, ?)
+                `;
+  const [postUserConceptRows] = await connection.query(postUserConceptQuery, [userId, conceptId]);
+  return postUserConceptRows;
+}
+
+
 module.exports = {
   selectConceptStageOne,
   selectConceptStageTwo,
   selectConceptStageThree,
   selectConcept,
-  insertConcept,
   selectConceptIng,
-  selectConceptId
+  selectConceptId,
+  selectTestResult,
+  postUserConcept
 };

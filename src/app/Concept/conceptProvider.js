@@ -47,3 +47,11 @@ exports.getConceptId = async function () {
 
   return getConceptIdResult;
 };
+
+exports.retreiveConceptId = async function(stageOneResult, stageTwoResult) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectTestResult = await conceptDao.selectTestResult(connection, stageOneResult, stageTwoResult);
+  connection.release();
+
+  return selectTestResult;
+}

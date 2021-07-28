@@ -38,8 +38,9 @@ exports.postUsers = async function (req, res) {
     if(!/^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]*$/.test(nickname))
         return res.send(response(baseResponse.SIGNUP_NICKNAME_TYPE));
     
+    let imgUrl = 'https://ofmebucket.s3.ap-northeast-2.amazonaws.com/profileImage.png';
 
-    const signUpResponse = await userService.createUser(email, password, checkPassword, nickname);
+    const signUpResponse = await userService.createUser(email, password, checkPassword, nickname, imgUrl);
     return res.send(signUpResponse);
 };
 
