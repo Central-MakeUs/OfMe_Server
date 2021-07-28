@@ -88,11 +88,15 @@ exports.postConcept = async function (req, res) {
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    if(stageTwoResult < 1 || stageTwoResult > 4)
+        return res.send(response(baseResponse.CONCEPT_POST_STAGETWORESULT));
     
     const selectConceptIngRows = await conceptProvider.selectConceptIng(userId);
     if (selectConceptIngRows.length > 0) {
         return res.send(response(baseResponse.CONCEPT_POST_EXIST));
     }
+
 
     const postUserConceptResponse = await conceptService.postUserConcept(userId, stageOneResult, stageTwoResult);
 
