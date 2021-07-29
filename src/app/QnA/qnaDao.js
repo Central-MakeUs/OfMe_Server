@@ -1,24 +1,24 @@
 // 질문 리스트 조회
 async function selectQuestions(connection, selectParams) {
   const selectQuestionsQuery = `
-SELECT rankrow.id, sort, question, QnAAnswer.share
-FROM (
-   SELECT *, RANK() OVER (PARTITION BY qna.sort ORDER BY qna.question ASC, qna.id ASC) AS a
-   FROM QnAQuestion AS qna
-    WHERE sort = 'D' or sort = 'T'
-) AS rankrow
-LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id
-WHERE rankrow.a <= 20 or QnAAnswer.userId = ? and rankrow.status = 'Activated'
-UNION ALL
-SELECT rankrow.id, sort, question, QnAAnswer.share
-FROM (
-   SELECT *, RANK() OVER (PARTITION BY qna.sort ORDER BY qna.question ASC, qna.id ASC) AS a
-   FROM QnAQuestion AS qna
-    WHERE sort = 'O'
-    ORDER BY RAND()
-) AS rankrow
-LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id
-WHERE rankrow.a <= 20 or QnAAnswer.userId = ? and rankrow.status = 'Activated';
+                  SELECT rankrow.id, sort, question, QnAAnswer.share
+                  FROM (
+                    SELECT *, RANK() OVER (PARTITION BY qna.sort ORDER BY qna.question ASC, qna.id ASC) AS a
+                    FROM QnAQuestion AS qna
+                      WHERE sort = 'O'
+                      ORDER BY RAND()
+                  ) AS rankrow
+                  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = 15
+                  WHERE rankrow.a <= 20 and rankrow.status = 'Activated'
+                  UNION ALL
+                  SELECT rankrow.id, sort, question, QnAAnswer.share
+                  FROM (
+                    SELECT *, RANK() OVER (PARTITION BY qna.sort ORDER BY qna.question ASC, qna.id ASC) AS a
+                    FROM QnAQuestion AS qna
+                      WHERE (sort = 'D' or sort = 'T')and status = 'Activated'
+                  ) AS rankrow
+                  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = 15
+                  WHERE rankrow.a <= 20 and rankrow.status = 'Activated'     
                 `;
   const [selectQuestionsRows] = await connection.query(selectQuestionsQuery, selectParams);
   return selectQuestionsRows;
@@ -139,7 +139,7 @@ where id = ? and status = 'Activated';
 }
 
 async function selectEverything(connection, Params) {
-  const QuestionsQuery = `
+/* const QuestionsQuery = `
 SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
 FROM (
    SELECT *
@@ -154,6 +154,17 @@ FROM QnAAround
 INNER JOIN QnAQuestion ON QnAQuestion.id = QnAAround.questionId
 WHERE QnAAround.userId = ?;
                 `;
+*/
+  const QuestionsQuery = `
+              SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
+              FROM (
+                SELECT *
+                FROM QnAAround
+                  WHERE userId = 15
+              ) AS QnAAround
+              RIGHT JOIN QnAQuestion on QnAQuestion.id = QnAAround.questionId
+              WHERE QnAQuestion.status = 'Activated' ORDER BY RAND();
+  `;
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
   return QuestionsRows;
 }
@@ -170,12 +181,12 @@ WHERE Reward.userId = ? and status = 'Activated';
 
 async function selectShare(connection, Params) {
   const QuestionsQuery = `
-SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
-FROM QnAQuestion
-INNER JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
-LEFT JOIN QnAAround ON QnAQuestion.id = QnAAround.questionId
-WHERE QnAAnswer.userId = ? and QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y'
-order by QnAAround.id ASC;
+  SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
+  FROM QnAQuestion
+  INNER JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
+  LEFT JOIN QnAAround ON QnAQuestion.id = QnAAround.questionId and QnAAround.userId = QnAAnswer.userId
+  WHERE QnAAnswer.userId = 1 and QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y'
+  order by QnAAround.id ASC;
                 `;
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
   return QuestionsRows;
@@ -183,12 +194,11 @@ order by QnAAround.id ASC;
 
 async function selectCheck(connection, Params) {
   const QuestionsQuery = `
-SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
-FROM QnAQuestion
-INNER JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
-INNER JOIN QnAAround ON QnAQuestion.id = QnAAround.questionId
-WHERE QnAAnswer.userId = ? and QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y'
-order by QnAAround.id ASC;
+  SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
+  FROM QnAAround
+  INNER JOIN QnAQuestion ON QnAQuestion.id = QnAAround.questionId
+  WHERE QnAAround.userId = 1 and QnAQuestion.status = 'Activated'
+  order by QnAAround.id ASC;
                 `;
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
   return QuestionsRows;
@@ -212,16 +222,17 @@ ORDER BY RAND();
 
 async function selectQuestionPages(connection, Params) {
   const QuestionsQuery = `
-SELECT question, User.imgUrl, User.nickname, User.id as userId, answer, date_format(QnAAnswer.createAt, '%Y-%m-%d') as createAt
-FROM QnAQuestion
-RIGHT JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
-INNER JOIN User ON User.id = QnAAnswer.userId
-WHERE QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y' and QnAAnswer.questionId = ?
-ORDER BY QnAAnswer.createAt DESC;
+  SELECT question, User.imgUrl, User.nickname, User.id as userId, answer, QnAAnswer.id as answerId, date_format(QnAAnswer.createAt, '%Y-%m-%d') as createAt
+  FROM QnAQuestion
+  RIGHT JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
+  INNER JOIN User ON User.id = QnAAnswer.userId
+  WHERE QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y' and QnAAnswer.questionId = ?
+  ORDER BY QnAAnswer.createAt DESC;
                 `;
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
   return QuestionsRows;
 }
+
 async function selectRockIs(connection, Params) {
   const QuestionsQuery = `
 SELECT *
@@ -231,6 +242,7 @@ WHERE userId = ? and questionId = ?;
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
   return QuestionsRows;
 }
+
 async function insertDeclarations(connection, Params) {
   const QuestionsQuery = `
 insert into Declaration(answerId, userId)
@@ -239,6 +251,19 @@ values (?, ?);
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
   return QuestionsRows;
 }
+
+// 질문 잠금해제하여 QnAAround 테이블에 추가
+async function insertQnAAround(connection, questionId, userId) {
+  const insertQnAAroundQuery = `
+insert into QnAAround(questionId, userId)
+values (?, ?);
+                `;
+  const [insertQnAAroundRows] = await connection.query(insertQnAAroundQuery, [questionId, userId]);
+  return insertQnAAroundRows;
+}
+
+
+
 module.exports = {
   selectQuestions,
   selectQuestionsList,
@@ -259,4 +284,5 @@ module.exports = {
   selectQuestionPages,
   selectRockIs,
   insertDeclarations,
+  insertQnAAround
 };

@@ -21,11 +21,12 @@ order by UserType.createAt DESC limit 1;
 // 마이페이지 중단 함께한 친구들 조회
 async function selectMyfriend(connection, userId) {
   const ConceptStageQuery = `
-select ConceptImage.url, name, UserConcept.conceptPoint
-from UserConcept
-inner join ConceptData on UserConcept.conceptId = ConceptData.id
-inner join (select * from ConceptImage limit 1) ConceptImage on ConceptData.id = ConceptImage.conceptId
-where userId = ?;
+  select url, name, UserConcept.conceptPoint, UserConcept.conceptId
+  from UserConcept
+  inner join ConceptData on UserConcept.conceptId = ConceptData.id
+  join (select conceptId, url from ConceptImage where ConceptImage.situation = 'default1') Image on Image.conceptId = UserConcept.conceptId
+  where UserConcept.userId = 15 and UserConcept.status = 'End'
+  order by UserConcept.createAt DESC limit 5;
                 `;
   const [ConceptStageRows] = await connection.query(ConceptStageQuery, userId);
   return ConceptStageRows;
@@ -37,7 +38,8 @@ async function selectMyhistory(connection, userId) {
 select highlight, date_format(UserType.createAt, '%Y-%m-%d') as createAt
 from UserType
 inner join TypeData on TypeData.id = UserType.typeId
-where userId = ?;
+where userId = ? 
+order by UserType.createAt DESC limit 5;
                 `;
   const [ConceptStageRows] = await connection.query(ConceptStageQuery, userId);
   return ConceptStageRows;

@@ -21,17 +21,17 @@ exports.createAnswers = async function (questionId, userId, answer, share) {
         const connection = await pool.getConnection(async(conn) => conn);
         try {
 
-        await connection.beginTransaction();
-        
-        const answersResult = await qnaDao.createAnswers(connection, createAnswersParams);
-        if (share === 'Y')
-            await qnaDao.createReward(connection, createRewardParams);
-        await connection.commit();
-        connection.release();
+            await connection.beginTransaction();
+            
+            const answersResult = await qnaDao.createAnswers(connection, createAnswersParams);
+            if (share === 'Y') {
+                await qnaDao.createReward(connection, createRewardParams);
+            }
 
-        console.log(answersResult);
-        return response(baseResponse.SUCCESS);
+            await connection.commit();
+            connection.release();
 
+            return response(baseResponse.SUCCESS);
         } catch (err) {
             await connection.rollback();
             connection.release();
@@ -48,6 +48,7 @@ exports.updateAnswers = async function (answerId, userId, answer, share, questio
     try {
         const createAnswersParams = [answer, share, answerId];
         const createRewardParams = [userId, 2, '답변 공유'];
+        const deleteRewardParams = [userId, -2, '답변 공유 제거'];
 
         const connection = await pool.getConnection(async(conn) => conn);
         try {
@@ -58,6 +59,8 @@ exports.updateAnswers = async function (answerId, userId, answer, share, questio
 
         if (answersIsResult[0].share === 'N' && share === 'Y')
             await qnaDao.createReward(connection, createRewardParams);
+        if(answersIsResult[0].share === 'Y' && share === 'N')
+            await qnaDao.createReward(connection, deleteRewardParams);
 
         const answersResult = await qnaDao.updateAnswers(connection, createAnswersParams);
 
@@ -69,30 +72,43 @@ exports.updateAnswers = async function (answerId, userId, answer, share, questio
         } catch (err) {
             await connection.rollback();
             connection.release();
-            logger.error(`App - logout Service error\n: ${err.message}`);
+            logger.error(`App - updateAnswers Service error\n: ${err.message}`);
             return errResponse(baseResponse.DB_ERROR);
         }
     } catch (err) {
-        logger.error(`App - createConcept Service error\n: ${err.message}`);
+        logger.error(`App - updateAnswers Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };
 
-exports.deleteAnswers = async function (answerId) {
+exports.deleteAnswers = async function (answerId, userId, questionId) {
     try {
-        const deleteAnswersParams = [answerId];
-
         const connection = await pool.getConnection(async(conn) => conn);
+        try {
+            const deleteAnswersParams = [answerId];
+            const deleteRewardParams = [userId, -2, '답변 공유 제거'];
 
-        const deleteAnswersResult = await qnaDao.deleteAnswers(connection, deleteAnswersParams);
+            await connection.beginTransaction();
 
-        connection.release();
+            const answersIsResult = await qnaProvider.selectAnswersIs(questionId, userId);
+            if(answersIsResult[0].share === 'Y')
+                await qnaDao.createReward(connection, deleteRewardParams);
 
-        return response(baseResponse.SUCCESS);
-    } catch (err) {
-        logger.error(`App - createConcept Service error\n: ${err.message}`);
+            const deleteAnswersResult = await qnaDao.deleteAnswers(connection, deleteAnswersParams);
+
+            await connection.commit();
+            connection.release();
+
+            return response(baseResponse.SUCCESS);
+        } catch (err) {
+            logger.error(`App - deleteAnswers Service error\n: ${err.message}`);
+            return errResponse(baseResponse.DB_ERROR);
+        }
+    }  catch (err) {
+        logger.error(`App - deleteAnswers Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
+
 };
 
 exports.updateReward = async function (questionId, userId) {
@@ -127,6 +143,34 @@ exports.updateReward = async function (questionId, userId) {
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+
+exports.insertQnAAround = async function (questionId, userId) {
+    try {
+        const connection = await pool.getConnection(async(conn) => conn);
+        try {
+
+        await connection.beginTransaction();
+        
+        const insertQnAAroundResult = await qnaDao.insertQnAAround(connection, questionId, userId);
+
+        await connection.commit();
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+
+        } catch (err) {
+            await connection.rollback();
+            connection.release();
+            logger.error(`App - insertQnAAround Service error\n: ${err.message}`);
+            return errResponse(baseResponse.DB_ERROR);
+        }
+    } catch (err) {
+        logger.error(`App - insertQnAAround Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+
 
 
 exports.insertDeclarations = async function (answerId, userId) {
