@@ -160,7 +160,7 @@ WHERE QnAAround.userId = ?;
               FROM (
                 SELECT *
                 FROM QnAAround
-                  WHERE userId = 15
+                  WHERE userId = ?
               ) AS QnAAround
               RIGHT JOIN QnAQuestion on QnAQuestion.id = QnAAround.questionId
               WHERE QnAQuestion.status = 'Activated' ORDER BY RAND();
