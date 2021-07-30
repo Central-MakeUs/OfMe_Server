@@ -185,7 +185,7 @@ async function selectShare(connection, Params) {
   FROM QnAQuestion
   INNER JOIN QnAAnswer ON QnAQuestion.id = QnAAnswer.questionId
   LEFT JOIN QnAAround ON QnAQuestion.id = QnAAround.questionId and QnAAround.userId = QnAAnswer.userId
-  WHERE QnAAnswer.userId = 1 and QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y'
+  WHERE QnAAnswer.userId = ? and QnAAnswer.status = 'Activated' and QnAAnswer.share = 'Y'
   order by QnAAround.id ASC;
                 `;
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
@@ -197,7 +197,7 @@ async function selectCheck(connection, Params) {
   SELECT QnAQuestion.id as questionId, question, QnAAround.id as aroundId
   FROM QnAAround
   INNER JOIN QnAQuestion ON QnAQuestion.id = QnAAround.questionId
-  WHERE QnAAround.userId = 1 and QnAQuestion.status = 'Activated'
+  WHERE QnAAround.userId = ? and QnAQuestion.status = 'Activated'
   order by QnAAround.id ASC;
                 `;
   const [QuestionsRows] = await connection.query(QuestionsQuery, Params);
