@@ -14,10 +14,7 @@ exports.selectMypage = async function (userId) {
 
   connection.release();
 
-  let sumMypage = [];
-  sumMypage.push(selectMypageResult, selectMyfriendResult, selectMyhistoryResult);
-
-  return sumMypage;
+  return {selectMypageResult, selectMyfriendResult, selectMyhistoryResult};
 };
 
 exports.selectMypageDetail = async function (userId) {

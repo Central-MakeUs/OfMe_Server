@@ -19,9 +19,16 @@ exports.getMypage = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const selectMypageRows = await mypageProvider.selectMypage(userId);
-    
-    return res.send(response(baseResponse.SUCCESS, selectMypageRows));
+    let sumSelectMypages = await mypageProvider.selectMypage(userId);
+    console.log(sumSelectMypages[0])
+    return res.send({
+        isSuccess: true,
+        code: 1000,
+        message: '성공',
+        selectMypageResult: sumSelectMypages.selectMypageResult,
+        selectMyfriendResult: sumSelectMypages.selectMyfriendResult,
+        selectMyhistoryResult: sumSelectMypages.selectMyhistoryResult
+      });
 };
 
 /**
