@@ -270,9 +270,9 @@ exports.getQuestionPages = async function (req, res) {
     // 잠금해제를 안했다면 리워드를 차감
     if (getRockIsRows.length < 1) {
         const updateRewardRows = await qnaService.updateReward(questionId, userId);
-        const insertQnAAroundResult = await qnaService.insertQnAAround(questionId, userId);
         // 리워드가 부족한 경우
         if (updateRewardRows.isSuccess === false) return res.send(updateRewardRows);
+        const insertQnAAroundResult = await qnaService.insertQnAAround(questionId, userId);
     }
 
     // 조회
