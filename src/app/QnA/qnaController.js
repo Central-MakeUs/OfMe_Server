@@ -269,17 +269,23 @@ exports.getQuestionPages = async function (req, res) {
 
     // 조회
     const getQuestionPageRows = await qnaProvider.selectQuestionPages(questionId);
-    if (getQuestionPageRows.length < 1)
-        return res.send(response(baseResponse.QNA_AROUND_ANSEWER_NOT_EXIST));
+
+    // 잠금해제를 했다면
+    if (getRockIsRows.length > 0)
+        return res.send(response(baseResponse.SUCCESS, getQuestionPageRows));
+        
     
     // 잠금해제를 안했다면 리워드를 차감
     if (getRockIsRows.length < 1) {
+        // 해당 질문에 대한 답변이 없다면
+        if (getQuestionPageRows.length < 1)
+            return res.send(response(baseResponse.QNA_AROUND_ANSEWER_NOT_EXIST));
         const updateRewardRows = await qnaService.updateReward(questionId, userId);
         // 리워드가 부족한 경우
-        if (updateRewardRows.isSuccess === false) return res.send(updateRewardRows);
+        if (updateRewardRows.isSuccess === false) 
+            return res.send(updateRewardRows);
         const insertQnAAroundResult = await qnaService.insertQnAAround(questionId, userId);
     }
-
     return res.send(response(baseResponse.SUCCESS, getQuestionPageRows));
 };
 
