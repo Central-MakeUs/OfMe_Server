@@ -151,7 +151,7 @@ exports.patchAnswers = async function (req, res) {
 /**
  * API No. 6
  * API Name : 답변 삭제 API
- * [DELETE] /questions/:questionId/answers
+ * [DELETE] /questions/answers
  */
 exports.deleteAnswers = async function (req, res) {
     const userId = req.verifiedToken.userId;
