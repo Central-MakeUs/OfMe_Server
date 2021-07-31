@@ -8,7 +8,7 @@ async function selectQuestions(connection, selectParams) {
                       WHERE sort = 'O'
                       ORDER BY RAND()
                   ) AS rankrow
-                  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = 15
+                  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = ?
                   WHERE rankrow.a <= 20 and rankrow.status = 'Activated'
                   UNION ALL
                   SELECT rankrow.id, sort, question, QnAAnswer.share
@@ -17,7 +17,7 @@ async function selectQuestions(connection, selectParams) {
                     FROM QnAQuestion AS qna
                       WHERE (sort = 'D' or sort = 'T')and status = 'Activated'
                   ) AS rankrow
-                  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = 15
+                  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = ?
                   WHERE rankrow.a <= 20 and rankrow.status = 'Activated'     
                 `;
   const [selectQuestionsRows] = await connection.query(selectQuestionsQuery, selectParams);
