@@ -115,3 +115,42 @@ exports.getConceptId = async function (req, res) {
     } else
         return res.send(response(baseResponse.DB_ERROR));
 };
+
+exports.getConceptInfo = async function(req,res) {
+
+    const userId = req.verifiedToken.userId;
+    const {stageOneResult, stageTwoResult} = req.body;
+
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    if(stageTwoResult < 1 || stageTwoResult > 4)
+        return res.send(response(baseResponse.CONCEPT_POST_STAGETWORESULT));
+    
+    const retrieveConceptInfoResult = await conceptProvider.retrieveConceptInfo(stageOneResult, stageTwoResult);
+
+    return res.send(response(baseResponse.SUCCESS,retrieveConceptInfoResult));
+}
+
+exports.postConceptTwo = async function(req,res) {
+
+    const userId = req.verifiedToken.userId;
+    const conceptId = req.params.conceptId;
+
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    if(conceptId < 1 || conceptId > 20)
+        return res.send(response(baseResponse.CONCEPT_CONCEPTID_ERROR));
+    
+    const selectConceptIngRows = await conceptProvider.selectConceptIng(userId);
+    if (selectConceptIngRows.length > 0) {
+        return res.send(response(baseResponse.CONCEPT_POST_EXIST));
+    }
+
+    const postUserConceptResponse = await conceptService.postUserConceptTwo(userId, conceptId);
+
+    return res.send(postUserConceptResponse);
+}
