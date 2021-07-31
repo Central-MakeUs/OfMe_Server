@@ -1,24 +1,24 @@
 // 질문 리스트 조회
 async function selectQuestions(connection, selectParams) {
   const selectQuestionsQuery = `
-                  SELECT rankrow.id, sort, question, QnAAnswer.share
-                  FROM (
-                    SELECT *, RANK() OVER (PARTITION BY qna.sort ORDER BY qna.question ASC, qna.id ASC) AS a
-                    FROM QnAQuestion AS qna
-                      WHERE sort = 'O'
-                      ORDER BY RAND()
-                  ) AS rankrow
-                  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = ?
-                  WHERE rankrow.a <= 20 and rankrow.status = 'Activated'
-                  UNION ALL
-                  SELECT rankrow.id, sort, question, QnAAnswer.share
-                  FROM (
-                    SELECT *, RANK() OVER (PARTITION BY qna.sort ORDER BY qna.question ASC, qna.id ASC) AS a
-                    FROM QnAQuestion AS qna
-                      WHERE (sort = 'D' or sort = 'T')and status = 'Activated'
-                  ) AS rankrow
-                  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = ?
-                  WHERE rankrow.a <= 20 and rankrow.status = 'Activated'     
+  SELECT rankrow.id, sort, question, QnAAnswer.share
+  FROM (
+    SELECT *, RANK() OVER (PARTITION BY qna.sort ORDER BY qna.question ASC, qna.id ASC) AS a
+    FROM QnAQuestion AS qna
+      WHERE sort = 'O'
+      ORDER BY RAND()
+  ) AS rankrow
+  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = ? and QnAAnswer.status = 'Activated'
+  WHERE rankrow.a <= 20 and rankrow.status = 'Activated'
+  UNION ALL
+  SELECT rankrow.id, sort, question, QnAAnswer.share
+  FROM (
+    SELECT *, RANK() OVER (PARTITION BY qna.sort ORDER BY qna.question ASC, qna.id ASC) AS a
+    FROM QnAQuestion AS qna
+      WHERE (sort = 'D' or sort = 'T')and status = 'Activated'
+  ) AS rankrow
+  LEFT JOIN QnAAnswer on QnAAnswer.questionId = rankrow.id and QnAAnswer.userId = ? and QnAAnswer.status = 'Activated'
+  WHERE rankrow.a <= 20 and rankrow.status = 'Activated' 
                 `;
   const [selectQuestionsRows] = await connection.query(selectQuestionsQuery, selectParams);
   return selectQuestionsRows;
