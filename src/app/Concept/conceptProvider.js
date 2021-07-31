@@ -55,3 +55,11 @@ exports.retreiveConceptId = async function(stageOneResult, stageTwoResult) {
 
   return selectTestResult;
 }
+
+exports.retrieveConceptInfo = async function(stageOneResult, stageTwoResult) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectTestResult = await conceptDao.selectConceptTestResultInfo(connection, stageOneResult, stageTwoResult);
+  connection.release();
+
+  return selectTestResult;
+}

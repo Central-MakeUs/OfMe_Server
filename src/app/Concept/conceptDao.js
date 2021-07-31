@@ -88,6 +88,18 @@ async function postUserConcept(connection, userId, conceptId) {
   return postUserConceptRows;
 }
 
+// 컨셉 추천 테스트 결과 조회
+async function selectConceptTestResultInfo(connection, stageOneResult, stageTwoResult) {
+  const selectConceptTestResultInfoQuery = `
+                select ConceptData.id, url, name, subName, description, advantage, habit, behavior, value, music
+                from ConceptData
+                join ConceptSort on ConceptSort.conceptId = ConceptData.id
+                join ConceptImage on ConceptImage.ConceptId = ConceptSort.conceptId
+                where ConceptSort.testKeywordId = ? and ConceptSort.testAnswerId = ? and ConceptImage.situation = 'default1';
+  `
+  const [selectConceptTestResultInfoRows] = await connection.query(selectConceptTestResultInfoQuery, [stageOneResult, stageTwoResult]);
+  return selectConceptTestResultInfoRows;
+}
 
 module.exports = {
   selectConceptStageOne,
@@ -97,5 +109,6 @@ module.exports = {
   selectConceptIng,
   selectConceptId,
   selectTestResult,
-  postUserConcept
+  postUserConcept,
+  selectConceptTestResultInfo
 };

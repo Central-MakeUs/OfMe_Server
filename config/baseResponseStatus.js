@@ -42,6 +42,7 @@ module.exports = {
     USERTYPE_ANSWER_EMPTY : { "isSuccess": false, "code": 2026, "message": "EI, NS, TF, PJ 질문의 답변을 모두 입력해주세요."},
     CONCEPT_POST_STAGETWORESULT :  { "isSuccess": false, "code": 2027, "message": "stageTwoResult 값은 1~4 사이의 값을 입력해주세요."},
     QNA_QUESTIONID_NOT_EXIST : {"isSuccess": false, "code": 2028, "message": "questionId 값을 입력해주세요."},
+    CONCEPT_CONCEPTID_ERROR : {"isSuccess": false, "code": 2029, "message": "stageTwoResult 값은 1~20 사이의 값을 입력해주세요."},
 
 
 
