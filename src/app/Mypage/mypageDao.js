@@ -25,7 +25,7 @@ async function selectMyfriend(connection, userId) {
   from UserConcept
   inner join ConceptData on UserConcept.conceptId = ConceptData.id
   join (select conceptId, url from ConceptImage where ConceptImage.situation = 'default1') Image on Image.conceptId = UserConcept.conceptId
-  where UserConcept.userId = 15 and UserConcept.status = 'End'
+  where UserConcept.userId = ? and UserConcept.status = 'End'
   order by UserConcept.createAt DESC limit 5;
                 `;
   const [ConceptStageRows] = await connection.query(ConceptStageQuery, userId);
