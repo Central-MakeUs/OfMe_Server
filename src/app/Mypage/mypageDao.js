@@ -2,7 +2,7 @@
 async function selectMypage(connection, user) {
   const ConceptStageQuery = `
 select UserType.createAt, nickname, concept.name, User.imgUrl, TypeData.highlight,
-       (select sum(point) from Reward where userId = ?) as point
+       (select ifnull(sum(point), 0) from Reward where userId = ?) as point
 from User
 left join (select ConceptData.name, userId
     from UserConcept
@@ -10,7 +10,6 @@ left join (select ConceptData.name, userId
     where UserConcept.status = 'Activated') concept on concept.userId = User.id
 left join UserType on UserType.userId = User.id
 left join TypeData on TypeData.id = UserType.typeId
-inner join Reward on Reward.userId = User.id
 where User.id = ?
 order by UserType.createAt DESC limit 1;
                 `;
@@ -25,7 +24,7 @@ async function selectMyfriend(connection, userId) {
   from UserConcept
   inner join ConceptData on UserConcept.conceptId = ConceptData.id
   join (select conceptId, url from ConceptImage where ConceptImage.situation = 'default1') Image on Image.conceptId = UserConcept.conceptId
-  where UserConcept.userId = 15 and UserConcept.status = 'End'
+  where UserConcept.userId = ? and UserConcept.status = 'End'
   order by UserConcept.createAt DESC limit 5;
                 `;
   const [ConceptStageRows] = await connection.query(ConceptStageQuery, userId);
