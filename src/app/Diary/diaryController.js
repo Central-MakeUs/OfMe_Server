@@ -106,8 +106,9 @@ exports.deleteDiarys = async function (req, res) {
     const { diaryId } = req.body;
 
     if (!diaryId) return res.send(response(baseResponse.DIARY_ID_NOT_EXIST));
-
+    console.log(userId)
     const selectDiaryIdRows = await diaryProvider.selectDiaryUserId(diaryId);
+    console.log(selectDiaryIdRows)
     if (selectDiaryIdRows[0].userId != userId) return res.send(response(baseResponse.DIARY_USER_NOT_EXIST));
     else if(selectDiaryIdRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
 
