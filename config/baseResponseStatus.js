@@ -81,6 +81,7 @@ module.exports = {
     DIARY_CHARACTER_NOT_EXIST : { "isSuccess": false, "code": 3115, "message": "캐릭터를 설정해주세요. 캐릭터를 설정하지 않으면 캐릭터인덱스 -1을 주십시오." },
     DIARY_USER_NOT_EXIST : { "isSuccess": false, "code": 3116, "message": "권한이 없습니다." },
     DIARY_ID_NOT_EXIST : { "isSuccess": false, "code": 3117, "message": "삭제할 다이어리를 입력해주세요." },
+    CONCEPT_ID_NOT_EXIST : { "isSuccess": false, "code": 3118, "message": "사용한 컨셉이 없습니다." },
 
     // QnA error
     QNA_SORT_NOT_EXIST : { "isSuccess": false, "code": 3130, "message": "조회할 카테고리를 정확하게 입력해주세요, O: 오늘의 오브미  D: 일상이야기  T: 나의생각" },

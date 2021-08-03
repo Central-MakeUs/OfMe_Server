@@ -133,9 +133,9 @@ exports.getDateDiarys = async function (req, res) {
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
-
+    console.log(userId, createAt)
     const selectDiaryRows = await diaryProvider.selectDateDiary(userId, createAt);
-
-    if(selectDiaryRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
+    console.log(selectDiaryRows)
+    if(selectDiaryRows.length < 1) return res.send(response(baseResponse.CONCEPT_ID_NOT_EXIST));
     else return res.send(response(baseResponse.SUCCESS, selectDiaryRows));
 };

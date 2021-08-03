@@ -109,7 +109,7 @@ async function selectDateDiary(connection, userId, createAt) {
 SELECT UserConcept.id, conceptId, ConceptData.name
 FROM UserConcept
 INNER JOIN ConceptData ON UserConcept.conceptId = ConceptData.id
-WHERE userId = ? and date(UserConcept.createAt) = ? and UserConcept.status = 'Activated';
+WHERE userId = ? and date(UserConcept.createAt) = ?;
                 `;
   const [selectDiaryRows] = await connection.query(selectQuery, [userId, createAt]);
   return selectDiaryRows;
