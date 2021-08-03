@@ -119,7 +119,7 @@ exports.getConceptId = async function (req, res) {
 exports.getConceptInfo = async function(req,res) {
 
     const userId = req.verifiedToken.userId;
-    const {stageOneResult, stageTwoResult} = req.body;
+    const {stageOneResult, stageTwoResult} = req.params;
 
     const userRows = await userProvider.getUser(userId);
     if (!userRows)

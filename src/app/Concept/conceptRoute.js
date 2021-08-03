@@ -22,7 +22,7 @@ module.exports = function(app){
     app.post('/concepts', jwtMiddleware, concept.postConcept);
 
     // 5-1. 컨셉 추천 테스트 결과 조회
-    app.get('/concepts-two', jwtMiddleware, concept.getConceptInfo);
+    app.get('/concepts-two/:stageOneResult/:stageTwoResult', jwtMiddleware, concept.getConceptInfo);
 
     // 5-2. 컨셉 등록 API
     app.post('/concepts-two/:conceptId', jwtMiddleware, concept.postConceptTwo);
