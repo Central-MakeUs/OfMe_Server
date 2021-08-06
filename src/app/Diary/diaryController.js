@@ -133,7 +133,7 @@ exports.getDateDiarys = async function (req, res) {
     const userId = req.verifiedToken.userId;
     const {years, months, days} = req.query;
     const createAt = years+'-'+months+'-'+days;
-
+    console.log(userId)
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));

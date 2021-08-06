@@ -18,7 +18,7 @@ exports.getConceptStageOne = async function (req, res) {
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
-
+    
     const stageOneRows = await conceptProvider.selectConceptStageOne();
 
     return res.send(response(baseResponse.SUCCESS, stageOneRows));
