@@ -19,6 +19,10 @@ module.exports = function(app){
 
     // 회원탈퇴 API
     app.delete('/users', jwtMiddleware, user.withdraw);
+
+    // 유저 닉네임 조회 API
+    app.get('/nickname', jwtMiddleware, user.nickname);
+
     
 };
 

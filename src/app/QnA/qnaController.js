@@ -105,9 +105,11 @@ exports.postAnswers = async function (req, res) {
     if (answer.length < 1) return res.send(response(baseResponse.QNA_ANSEWER_NOT_EXIST));
     if (answer.length > 290) return res.send(response(baseResponse.QNA_ANSEWER_LENGTH_NOT_EXIST));
 
+    // 질문 유무 확인
     const getQuestionIsRows = await qnaProvider.selectQuestionIs(questionId);
     if (getQuestionIsRows < 1) return res.send(response(baseResponse.QNA_QUESTION_IS_NOT_EXIST));
 
+    // 유저가 이미 답변을 작성한 질문인지 확인
     const getAnswersIsRows = await qnaProvider.selectAnswersIs(questionId, userId);
     if (getAnswersIsRows.length > 0) return res.send(response(baseResponse.QNA_ANSEWER_EXIST));
 
@@ -149,7 +151,7 @@ exports.patchAnswers = async function (req, res) {
 /**
  * API No. 6
  * API Name : 답변 삭제 API
- * [DELETE] /questions/:questionId/answers
+ * [DELETE] /questions/answers
  */
 exports.deleteAnswers = async function (req, res) {
     const userId = req.verifiedToken.userId;
@@ -165,7 +167,7 @@ exports.deleteAnswers = async function (req, res) {
     const getAnswersIsRows = await qnaProvider.selectAnswersIs(questionId, userId);
     if (getAnswersIsRows.length < 1) return res.send(response(baseResponse.QNA_ANSEWER_IS_NOT_EXIST));
 
-    const deleteAnswersRows = await qnaService.deleteAnswers(getAnswersIsRows[0].id);
+    const deleteAnswersRows = await qnaService.deleteAnswers(getAnswersIsRows[0].id, userId, questionId);
 
     return res.send(deleteAnswersRows);
 };
@@ -261,15 +263,29 @@ exports.getQuestionPages = async function (req, res) {
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
     const questionId = req.params.questionId;
+
     // 이미 잠금해제한 것인지 확인
     const getRockIsRows = await qnaProvider.selectRockIs(questionId, userId);
-    if (getRockIsRows.length < 1) {
-        const updateRewardRows = await qnaService.updateReward(questionId, userId);
-        if (updateRewardRows.isSuccess === false) return res.send(updateRewardRows);
-    }
+
     // 조회
     const getQuestionPageRows = await qnaProvider.selectQuestionPages(questionId);
-    if (getQuestionPageRows.length < 1) return res.send(response(baseResponse.QNA_AROUND_ANSEWER_NOT_EXIST));
+
+    // 잠금해제를 했다면
+    if (getRockIsRows.length > 0)
+        return res.send(response(baseResponse.SUCCESS, getQuestionPageRows));
+        
+    
+    // 잠금해제를 안했다면 리워드를 차감
+    if (getRockIsRows.length < 1) {
+        // 해당 질문에 대한 답변이 없다면
+        if (getQuestionPageRows.length < 1)
+            return res.send(response(baseResponse.QNA_AROUND_ANSEWER_NOT_EXIST));
+        const updateRewardRows = await qnaService.updateReward(questionId, userId);
+        // 리워드가 부족한 경우
+        if (updateRewardRows.isSuccess === false) 
+            return res.send(updateRewardRows);
+        const insertQnAAroundResult = await qnaService.insertQnAAround(questionId, userId);
+    }
     return res.send(response(baseResponse.SUCCESS, getQuestionPageRows));
 };
 

@@ -55,8 +55,8 @@ async function selectUserJwt(connection, userId) {
 // 회원가입
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-      INSERT INTO User (email, password, nickname, status)
-      VALUES (?, ?, ?, "Activated");
+      INSERT INTO User (email, password, nickname, imgUrl, status)
+      VALUES (?, ?, ?, ?, "Activated");
   `
   const insertUserInfoRows = await connection.query(insertUserInfoQuery, insertUserInfoParams);
   return insertUserInfoRows;
@@ -132,6 +132,19 @@ async function getUser(connection, userId) {
   return getUserRows;
 }
 
+// 유저 닉네임 조회
+async function selectUserNickname2(connection, userId) {
+  const selectUserNicknameQuery = `
+      select id, nickname
+      from User
+      where id = ? and status = 'Activated';
+  `;
+  
+  const [selectUserNicknameRows] = await connection.query(selectUserNicknameQuery, [userId]);
+  return selectUserNicknameRows[0];
+}
+
+
 module.exports = {
   selectUser,
   selectUserEmail,
@@ -145,4 +158,5 @@ module.exports = {
   selectLogoutToken,
   deleteUser,
   getUser,
+  selectUserNickname2
 };

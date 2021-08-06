@@ -1,9 +1,9 @@
 // 연도,월,일로 다이어리 조회
 async function selectDiary(connection, userId, createAt) {
   const selectQuery = `
-                SELECT DayDiary.id, userId, conceptId, ConceptData.name, title, content, date_format(DayDiary.createAt, '%Y-%m-%d') as createAt
+SELECT DayDiary.id, userId, conceptId, ConceptData.name, title, content, date_format(DayDiary.createAt, '%Y-%m-%d') as createAt
                 FROM DayDiary
-                INNER JOIN ConceptData ON DayDiary.conceptId = ConceptData.id
+                LEFT JOIN ConceptData ON DayDiary.conceptId = ConceptData.id
                 WHERE userId = ? and date(DayDiary.createAt) = ? and DayDiary.status = 'Activated';
                 `;
   const [selectDiaryRows] = await connection.query(selectQuery, [userId, createAt]);
@@ -35,14 +35,14 @@ async function insertDiaryImg(connection, [DiaryImgList]) {
 }
 
 // 다이어리 작성자와 수정자 확인
-async function selectDiaryId(connection, diaryId) {
+async function selectDiaryUserId(connection, diaryId) {
   const selectQuery = `
                 SELECT userId
                 FROM DayDiary
                 WHERE id = ?;
                 `;
-  const [selectDiaryRows] = await connection.query(selectQuery, diaryId);
-  return selectDiaryRows;
+  const [selectDiaryUserId] = await connection.query(selectQuery, diaryId);
+  return selectDiaryUserId;
 }
 
 // 다이어리 수정
@@ -114,15 +114,28 @@ WHERE userId = ? and date(UserConcept.createAt) = ?;
   const [selectDiaryRows] = await connection.query(selectQuery, [userId, createAt]);
   return selectDiaryRows;
 }
+
+// 다이어리 리워드 등록
+async function insertReward(connection, userId) {
+  const insertRewardQuery = `
+                insert into Reward (userId, point, route)
+                values (?, 5, '다이어리 등록');
+                `;
+  const [insertReward] = await connection.query(insertRewardQuery, userId);
+  return insertReward;
+}
+
+
 module.exports = {
   selectDiary,
   insertDiaryInfo,
-  selectDiaryId,
+  selectDiaryUserId,
   insertDiaryImg,
   updateDiary,
   updateDiaryImg,
   selectDiaryImg,
   deleteDiary,
   deleteDiaryImg,
-  selectDateDiary
+  selectDateDiary,
+  insertReward
 };

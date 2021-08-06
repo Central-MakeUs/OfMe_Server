@@ -40,6 +40,9 @@ module.exports = {
     USERTYPE_ANSWER_ERROR : { "isSuccess": false, "code": 2024, "message": "body의 value 값 형식이 올바르지 않습니다."},
     USERTYPE_ANSWER_LENGTH : { "isSuccess": false, "code": 2025, "message": "body의 value의 개수가 3개가 아닙니다."},
     USERTYPE_ANSWER_EMPTY : { "isSuccess": false, "code": 2026, "message": "EI, NS, TF, PJ 질문의 답변을 모두 입력해주세요."},
+    CONCEPT_POST_STAGETWORESULT :  { "isSuccess": false, "code": 2027, "message": "stageTwoResult 값은 1~4 사이의 값을 입력해주세요."},
+    QNA_QUESTIONID_NOT_EXIST : {"isSuccess": false, "code": 2028, "message": "questionId 값을 입력해주세요."},
+    CONCEPT_CONCEPTID_ERROR : {"isSuccess": false, "code": 2029, "message": "stageTwoResult 값은 1~20 사이의 값을 입력해주세요."},
 
 
 
@@ -70,14 +73,15 @@ module.exports = {
     MAIN_INT_STAR_NOT_EXIST : { "isSuccess": false, "code": 3034, "message": "별점은 정수 1~5로 입력해주세요." },
 
     // 다이어리 error
-    DIARY_NOT_EXIST : { "isSuccess": false, "code": 3110, "message": "작성된 다이어리가 없습니다." },
+    DIARY_NOT_EXIST : { "isSuccess": false, "code": 3110, "message": "다이어리가 존재하지 않습니다." },
     DIARY_TITLE_NOT_EXIST : { "isSuccess": false, "code": 3111, "message": "타이틀을 입력해주세요." },
     DIARY_TEXT_NOT_EXIST : { "isSuccess": false, "code": 3112, "message": "내용을 입력해주세요." },
     DIARY_CREATEAT_NOT_EXIST : { "isSuccess": false, "code": 3113, "message": "날짜를 선택해주세요." },
     DIARY_IMG_NOT_EXIST : { "isSuccess": false, "code": 3114, "message": "이미지는 최대 4개까지 입니다." },
-    DIARY_CHARACTER_NOT_EXIST : { "isSuccess": false, "code": 3115, "message": "캐릭터를 설정해주세요. 캐릭터를 설정하지 않으면 캐릭터인덱스 0을 주십시오." },
+    DIARY_CHARACTER_NOT_EXIST : { "isSuccess": false, "code": 3115, "message": "캐릭터를 설정해주세요. 캐릭터를 설정하지 않으면 캐릭터인덱스 -1을 주십시오." },
     DIARY_USER_NOT_EXIST : { "isSuccess": false, "code": 3116, "message": "권한이 없습니다." },
     DIARY_ID_NOT_EXIST : { "isSuccess": false, "code": 3117, "message": "삭제할 다이어리를 입력해주세요." },
+    CONCEPT_ID_NOT_EXIST : { "isSuccess": false, "code": 3118, "message": "사용한 컨셉이 없습니다." },
 
     // QnA error
     QNA_SORT_NOT_EXIST : { "isSuccess": false, "code": 3130, "message": "조회할 카테고리를 정확하게 입력해주세요, O: 오늘의 오브미  D: 일상이야기  T: 나의생각" },

@@ -27,7 +27,7 @@ exports.getDiarys = async function (req, res) {
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
     const selectDiaryRows = await diaryProvider.selectDiary(userId, createAt);
-    console.log(!selectDiaryRows);
+
     if(selectDiaryRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
     else return res.send(response(baseResponse.SUCCESS, selectDiaryRows));
 };
@@ -39,25 +39,23 @@ exports.getDiarys = async function (req, res) {
  */
 exports.postDiarys = async function (req, res) {
     /**
-     * body: title, character, text, img, createAt
+     * body: title, character, text, createAt
      */
     const userId = req.verifiedToken.userId;
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const {title, character, text, img, createAt} = req.body;
+    const {title, character, text, createAt} = req.body;
 
     if (!title) return res.send(response(baseResponse.DIARY_TITLE_NOT_EXIST));
     else if (!text) return res.send(response(baseResponse.DIARY_TEXT_NOT_EXIST));
     else if (!createAt) return res.send(response(baseResponse.DIARY_CREATEAT_NOT_EXIST));
     else if (!character) return res.send(response(baseResponse.DIARY_CHARACTER_NOT_EXIST));
-    else if (img.length > 4) return res.send(response(baseResponse.DIARY_IMG_NOT_EXIST));
 
-    const createDiaryRows = await diaryService.createDiary(userId, title, character, text, img, createAt);
+    const createDiaryRows = await diaryService.createDiary(userId, title, character, text, createAt);
 
-    if(createDiaryRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
-    else return res.send(response(baseResponse.SUCCESS));
+    return res.send(createDiaryRows);
 };
 
 /**
@@ -74,22 +72,19 @@ exports.patchDiarys = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const {title, character, text, createAt, img, diaryId} = req.body;
+    const {title, character, text, createAt, diaryId} = req.body;
 
     if (!title) return res.send(response(baseResponse.DIARY_TITLE_NOT_EXIST));
     else if (!text) return res.send(response(baseResponse.DIARY_TEXT_NOT_EXIST));
     else if (!createAt) return res.send(response(baseResponse.DIARY_CREATEAT_NOT_EXIST));
     else if (!character) return res.send(response(baseResponse.DIARY_CHARACTER_NOT_EXIST));
-    else if (img.length > 4) return res.send(response(baseResponse.DIARY_IMG_NOT_EXIST));
 
-    const selectDiaryIdRows = await diaryProvider.selectDiaryId(userId, diaryId);
+    const selectDiaryUserIdRows = await diaryProvider.selectDiaryUserId(diaryId);
 
-    if (selectDiaryIdRows[0].userId != userId) return res.send(response(baseResponse.DIARY_USER_NOT_EXIST));
-    else if(selectDiaryIdRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
+    if(selectDiaryUserIdRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
+    else if (selectDiaryUserIdRows[0].userId != userId) return res.send(response(baseResponse.DIARY_USER_NOT_EXIST));
 
-    const selectDiaryImgRows = await diaryProvider.selectDiaryImg(diaryId);
-
-    const updateDiaryRows = await diaryService.updateDiary(selectDiaryImgRows, diaryId, userId, title, character, text, img, createAt);
+    const updateDiaryRows = await diaryService.updateDiary(diaryId, userId, title, character, text, createAt);
 
     if (updateDiaryRows) return res.send(response(baseResponse.SUCCESS));
 };
@@ -97,7 +92,7 @@ exports.patchDiarys = async function (req, res) {
 /**
  * API No. 4
  * API Name : 데일리 다이어리 삭제 API
- * [PATCH] /diarys/:diaryId
+ * [PATCH] /diarys
  */
 exports.deleteDiarys = async function (req, res) {
     /**
@@ -108,11 +103,12 @@ exports.deleteDiarys = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const diaryId = req.params.diaryId;
+    const { diaryId } = req.body;
 
     if (!diaryId) return res.send(response(baseResponse.DIARY_ID_NOT_EXIST));
-
-    const selectDiaryIdRows = await diaryProvider.selectDiaryId(userId, diaryId);
+    console.log(userId)
+    const selectDiaryIdRows = await diaryProvider.selectDiaryUserId(diaryId);
+    console.log(selectDiaryIdRows)
     if (selectDiaryIdRows[0].userId != userId) return res.send(response(baseResponse.DIARY_USER_NOT_EXIST));
     else if(selectDiaryIdRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
 
@@ -137,9 +133,9 @@ exports.getDateDiarys = async function (req, res) {
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
-
+    console.log(userId, createAt)
     const selectDiaryRows = await diaryProvider.selectDateDiary(userId, createAt);
-
-    if(selectDiaryRows.length < 1) return res.send(response(baseResponse.DIARY_NOT_EXIST));
+    console.log(selectDiaryRows)
+    if(selectDiaryRows.length < 1) return res.send(response(baseResponse.CONCEPT_ID_NOT_EXIST));
     else return res.send(response(baseResponse.SUCCESS, selectDiaryRows));
 };

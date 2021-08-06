@@ -38,8 +38,9 @@ exports.postUsers = async function (req, res) {
     if(!/^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]*$/.test(nickname))
         return res.send(response(baseResponse.SIGNUP_NICKNAME_TYPE));
     
+    let imgUrl = 'https://ofmebucket.s3.ap-northeast-2.amazonaws.com/profileImage.png';
 
-    const signUpResponse = await userService.createUser(email, password, checkPassword, nickname);
+    const signUpResponse = await userService.createUser(email, password, checkPassword, nickname, imgUrl);
     return res.send(signUpResponse);
 };
 
@@ -112,4 +113,13 @@ exports.withdraw = async function(req,res) {
     const deleteUserResponse = await userService.deleteUser(userIdFromJwt, emailFromJwt);
 
     return res.send(deleteUserResponse);
+}
+
+exports.nickname = async function(req,res) {
+
+    const userId = req.verifiedToken.userId;
+
+    const userNickname = await userProvider.getUserNickname(userId);
+
+    return res.send(userNickname);
 }

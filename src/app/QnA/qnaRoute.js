@@ -39,6 +39,6 @@ module.exports = function(app){
     // 12. 답변 둘러보기 API
     app.get('/questions/:questionId/pages', jwtMiddleware, qna.getQuestionPages);
 
-    // 13. 답변 인덱스 API
+    // 13. 둘러보기 답변 신고하기 API
     app.post('/declarations', jwtMiddleware, qna.postDeclarations);
 };

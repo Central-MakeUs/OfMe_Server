@@ -19,9 +19,16 @@ exports.getMypage = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const selectMypageRows = await mypageProvider.selectMypage(userId);
-    
-    return res.send(response(baseResponse.SUCCESS, selectMypageRows));
+    let sumSelectMypages = await mypageProvider.selectMypage(userId);
+
+    return res.send({
+        isSuccess: true,
+        code: 1000,
+        message: '성공',
+        selectMypageResult: sumSelectMypages.selectMypageResult,
+        selectMyfriendResult: sumSelectMypages.selectMyfriendResult,
+        selectMyhistoryResult: sumSelectMypages.selectMyhistoryResult
+      });
 };
 
 /**
@@ -52,9 +59,18 @@ exports.patchMypageDetail = async function (req, res) {
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
 
-    const selectMypageRows = await conceptProvider.selectMypage(userId);
+    const { nickname, imgUrl } = req.body;
 
-    return res.send(response(baseResponse.SUCCESS, selectMypageRows));
+    if (!nickname)
+        return res.send(response(baseResponse.SIGNUP_NICKNAME_EMPTY));
+    if (2 > nickname.length || nickname.length > 10)
+        return res.send(response(baseResponse.SIGNUP_NICKNAME_LENGTH));
+    if(!/^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]*$/.test(nickname))
+        return res.send(response(baseResponse.SIGNUP_NICKNAME_TYPE));
+
+    const updateMypageRows = await mypageProvider.updateMypage(userId, nickname, imgUrl);
+
+    return res.send(response(baseResponse.SUCCESS));
 };
 
 /**

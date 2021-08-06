@@ -83,108 +83,24 @@ exports.getConcept = async function (req, res) {
  */
 exports.postConcept = async function (req, res) {
     const userId = req.verifiedToken.userId;
+    const {stageOneResult, stageTwoResult} = req.body;
+
     const userRows = await userProvider.getUser(userId);
     if (!userRows)
         return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    if(stageTwoResult < 1 || stageTwoResult > 4)
+        return res.send(response(baseResponse.CONCEPT_POST_STAGETWORESULT));
     
     const selectConceptIngRows = await conceptProvider.selectConceptIng(userId);
     if (selectConceptIngRows.length > 0) {
         return res.send(response(baseResponse.CONCEPT_POST_EXIST));
     }
 
-    const { testList } = req.body;
-    let conceptId = 0;
 
-    if (testList[0] == 1 && testList[1] == 1){ // 모스
-        conceptId = 1;
-    } else if (testList[0] == 1 && testList[1] == 2){ // 리아
-        conceptId = 3;
-    } else if (testList[0] == 1 && testList[1] == 3){ // 시애나
-        conceptId = 5;
-    } else if (testList[0] == 1 && testList[1] == 4){ // 헤더
-        conceptId = 6;
-    } else if (testList[0] == 2 && testList[1] == 1){ // 로하
-        conceptId = 7;
-    } else if (testList[0] == 2 && (testList[1] == 2 || testList[1] == 4)){ // 제이비
-        conceptId = 2;
-    } else if (testList[0] == 2 && testList[1] == 3){ // 이노
-        conceptId = 4;
-    } else if (testList[0] == 3 && testList[1] == 1){ // 주주
-        conceptId = 10;
-    } else if (testList[0] == 3 && testList[1] == 2){ // 옐로우
-        conceptId = 11;
-    } else if (testList[0] == 3 && testList[1] == 3){ // 빈
-        conceptId = 14;
-    } else if (testList[0] == 3 && testList[1] == 4){ // 베어
-        conceptId = 17;
-    } else if (testList[0] == 4 && testList[1] == 1){ // 로키
-        conceptId = 8;
-    } else if (testList[0] == 4 && testList[1] == 2){ // 마크
-        conceptId = 12;
-    } else if (testList[0] == 4 && (testList[1] == 3 || testList[1] == 4)){ // 피즈
-        conceptId = 16;
-    } else if (testList[0] == 5 && testList[1] == 1){ // 폴
-        conceptId = 9;
-    } else if (testList[0] == 5 && testList[1] == 2){ // 오앤
-        conceptId = 19;
-    } else if (testList[0] == 5 && (testList[1] == 3 || testList[1] == 4)){ // 하이
-        conceptId = 15;
-    } else if (testList[0] == 6 && testList[1] == 1){ // 크리스탈
-        conceptId = 18;
-    } else if (testList[0] == 6 && testList[1] == 2){ // 로키
-        conceptId = 8;
-    } else if (testList[0] == 6 && testList[1] == 3){ // 폴
-        conceptId = 9;
-    } else if (testList[0] == 6 && testList[1] == 4){ // 리아
-        conceptId = 3;
-    } else if (testList[0] == 7 && testList[1] == 1){ // 이노
-        conceptId = 4;
-    } else if (testList[0] == 7 && testList[1] == 2){ // 옐로우
-        conceptId = 11;
-    } else if (testList[0] == 7 && testList[1] == 3){ // 크리스탈
-        conceptId = 18;
-    } else if (testList[0] == 7 && testList[1] == 4){ // 유우
-        conceptId = 20;
-    } else if (testList[0] == 8 && testList[1] == 1){ // 시애나
-        conceptId = 5;
-    } else if (testList[0] == 8 && (testList[1] == 2 || testList[1] == 4)){ // 마크
-        conceptId = 12;
-    } else if (testList[0] == 8 && testList[1] == 3){ // 오앤
-        conceptId = 19;
-    } else if (testList[0] == 9 && testList[1] == 1){ // 로하
-        conceptId = 7;
-    } else if (testList[0] == 9 && (testList[1] == 2 || testList[1] == 3)){ // 베어
-        conceptId = 17;
-    } else if (testList[0] == 9 && testList[1] == 4){ // 피즈
-        conceptId = 16;
-    } else if (testList[0] == 10 && (testList[1] == 1 || testList[1] == 4)){ // 유우
-        conceptId = 20;
-    } else if (testList[0] == 10 && testList[1] == 2){ // 빈
-        conceptId = 14;
-    } else if (testList[0] == 10 && testList[1] == 3){ // 뮤즈
-        conceptId = 13;
-    } else if (testList[0] == 11 && testList[1] == 1){ // 하이
-        conceptId = 15;
-    } else if (testList[0] == 11 && testList[1] == 2){ // 제이비
-        conceptId = 2;
-    } else if (testList[0] == 11 && testList[1] == 3){ // 주주
-        conceptId = 10;
-    } else if (testList[0] == 11 && testList[1] == 4){ // 리아
-        conceptId = 3;
-    } else if (testList[0] == 7 && (testList[1] == 1 || testList[1] == 3)){ // 모스
-        conceptId = 1;
-    } else if (testList[0] == 7 && testList[1] == 2){ // 헤더
-        conceptId = 6;
-    } else if (testList[0] == 7 && testList[1] == 4){ // 뮤즈
-        conceptId = 13;
-    }
+    const postUserConceptResponse = await conceptService.postUserConcept(userId, stageOneResult, stageTwoResult);
 
-    const postConceptRows = await conceptService.createConcept(userId, conceptId);
-
-    if (postConceptRows.affectedRows == 1) {
-        return res.send(response(baseResponse.SUCCESS, {"conceptId": conceptId}));
-    } else
-        return res.send(response(baseResponse.CONCEPT_POST_NOT_EXIST));
+    return res.send(postUserConceptResponse);
 };
 
 /**
@@ -199,3 +115,42 @@ exports.getConceptId = async function (req, res) {
     } else
         return res.send(response(baseResponse.DB_ERROR));
 };
+
+exports.getConceptInfo = async function(req,res) {
+
+    const userId = req.verifiedToken.userId;
+    const {stageOneResult, stageTwoResult} = req.params;
+
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    if(stageTwoResult < 1 || stageTwoResult > 4)
+        return res.send(response(baseResponse.CONCEPT_POST_STAGETWORESULT));
+    
+    const retrieveConceptInfoResult = await conceptProvider.retrieveConceptInfo(stageOneResult, stageTwoResult);
+
+    return res.send(response(baseResponse.SUCCESS,retrieveConceptInfoResult));
+}
+
+exports.postConceptTwo = async function(req,res) {
+
+    const userId = req.verifiedToken.userId;
+    const conceptId = req.params.conceptId;
+
+    const userRows = await userProvider.getUser(userId);
+    if (!userRows)
+        return res.send(response(baseResponse.LOGIN_WITHDRAWAL_ACCOUNT));
+
+    if(conceptId < 1 || conceptId > 20)
+        return res.send(response(baseResponse.CONCEPT_CONCEPTID_ERROR));
+    
+    const selectConceptIngRows = await conceptProvider.selectConceptIng(userId);
+    if (selectConceptIngRows.length > 0) {
+        return res.send(response(baseResponse.CONCEPT_POST_EXIST));
+    }
+
+    const postUserConceptResponse = await conceptService.postUserConceptTwo(userId, conceptId);
+
+    return res.send(postUserConceptResponse);
+}
